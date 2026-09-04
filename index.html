@@ -1,257 +1,565 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Aussie Mafia | Australian Rust Community</title>
+<title>Aussie Mafia | Australian Rust Community</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #090909;
+    color: #eee9df;
+}
+
+/* NAVIGATION */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 7%;
+    background: rgba(5,5,5,.94);
+    border-bottom: 1px solid #8c7348;
+}
+
+.logo {
+    color: #d8b77c;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+nav a {
+    color: #ddd;
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #d8b77c;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 720px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.30),
+            rgba(0,0,0,.88)
+        ),
+        radial-gradient(
+            circle at 50% 25%,
+            #856a3f 0%,
+            #382d1e 25%,
+            #111 60%,
+            #050505 100%
+        );
+}
+
+.hero-content {
+    max-width: 1000px;
+}
+
+.eyebrow {
+    color: #d8b77c;
+    letter-spacing: 7px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(58px, 10vw, 125px);
+    line-height: .9;
+    color: #e1c28b;
+    letter-spacing: 5px;
+
+    text-shadow:
+        0 3px #604821,
+        0 8px 25px rgba(0,0,0,.9);
+}
+
+.hero h2 {
+    margin-top: 24px;
+    font-size: clamp(19px, 3vw, 31px);
+    letter-spacing: 5px;
+    color: #fff;
+}
+
+.hero p {
+    max-width: 720px;
+    margin: 28px auto;
+    font-size: 18px;
+    line-height: 1.8;
+    color: #d5d0c7;
+}
+
+.btn {
+    display: inline-block;
+    margin: 8px;
+    padding: 16px 28px;
+
+    background: #c3a069;
+    color: #080808;
+
+    border: 1px solid #e2c48e;
+
+    text-decoration: none;
+    text-transform: uppercase;
+
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1px;
+
+    transition: .2s;
+}
+
+.btn:hover {
+    background: #e0c28c;
+    transform: translateY(-3px);
+}
+
+.btn-dark {
+    background: rgba(0,0,0,.55);
+    color: #dfc18a;
+}
+
+/* SECTIONS */
+
+section {
+    padding: 85px 7%;
+}
+
+.section-dark {
+    background: #0d0d0d;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.section-title span {
+    color: #a98a58;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 5px;
+}
+
+.section-title h2 {
+    color: #e1c28b;
+    margin-top: 10px;
+    font-size: clamp(30px, 5vw, 46px);
+    letter-spacing: 3px;
+}
+
+/* SERVER FEATURES */
+
+.cards {
+    max-width: 1150px;
+    margin: auto;
+
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 20px;
+}
+
+.card {
+    min-height: 190px;
+    padding: 30px 24px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #181613,
+            #0b0b0b
+        );
+
+    border: 1px solid #55462f;
+}
+
+.card .number {
+    color: #6e5b3c;
+    font-size: 34px;
+    font-weight: 900;
+}
+
+.card h3 {
+    margin: 12px 0;
+    color: #dfbd80;
+    font-size: 20px;
+}
+
+.card p {
+    color: #aaa69e;
+    line-height: 1.6;
+}
+
+/* ABOUT */
+
+.about {
+    max-width: 850px;
+    margin: auto;
+    text-align: center;
+
+    font-size: 19px;
+    line-height: 1.9;
+
+    color: #c9c5bc;
+}
+
+.gold {
+    color: #dfbd80;
+    font-weight: bold;
+}
+
+/* RULES */
+
+.rules {
+    max-width: 800px;
+    margin: auto;
+
+    padding: 38px;
+
+    background: #111;
+    border-left: 4px solid #c09b61;
+}
+
+.rules p {
+    padding: 11px 0;
+    border-bottom: 1px solid #242424;
+    color: #c9c6bf;
+}
+
+/* COMMUNITY */
+
+.community {
+    text-align: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #3b3020,
+            #0c0c0c 65%
+        );
+}
+
+.community h2 {
+    color: #e1c28b;
+    font-size: clamp(35px, 6vw, 60px);
+    letter-spacing: 3px;
+}
+
+.community p {
+    max-width: 700px;
+    margin: 20px auto 30px;
+    line-height: 1.8;
+    color: #c9c5bd;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 40px 20px;
+
+    text-align: center;
+
+    background: #050505;
+
+    border-top: 1px solid #3f3424;
+
+    color: #777;
+}
+
+footer strong {
+    color: #d8b77c;
+    letter-spacing: 4px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+
+    nav {
+        justify-content: center;
     }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.82)),
-        radial-gradient(circle at top, #6d5633 0%, #17130e 42%, #050505 100%);
-      background-attachment: fixed;
-      color: #f5f1e8;
-      min-height: 100vh;
-    }
-
-    header {
-      min-height: 520px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
-      border-bottom: 1px solid #9b8050;
+    nav .links {
+        display: none;
     }
 
     .hero {
-      max-width: 950px;
-    }
-
-    .hero h1 {
-      font-size: clamp(55px, 10vw, 110px);
-      letter-spacing: 6px;
-      color: #d5b477;
-      text-shadow:
-        0 3px 0 #4a3820,
-        0 8px 25px #000;
-    }
-
-    .hero h2 {
-      margin-top: 12px;
-      font-size: clamp(18px, 3vw, 30px);
-      letter-spacing: 4px;
-      color: white;
-    }
-
-    .hero p {
-      max-width: 720px;
-      margin: 25px auto;
-      color: #d5d1c8;
-      line-height: 1.7;
-      font-size: 18px;
-    }
-
-    .button {
-      display: inline-block;
-      margin: 8px;
-      padding: 15px 27px;
-      border: 1px solid #c4a36a;
-      background: #b08b50;
-      color: #080808;
-      text-decoration: none;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: .2s;
-    }
-
-    .button:hover {
-      background: #e0c18b;
-      transform: translateY(-2px);
-    }
-
-    .button.secondary {
-      background: rgba(0,0,0,.45);
-      color: #e0c18b;
+        min-height: 620px;
     }
 
     section {
-      max-width: 1100px;
-      margin: auto;
-      padding: 70px 25px;
+        padding: 65px 20px;
     }
+}
 
-    .section-title {
-      text-align: center;
-      color: #d5b477;
-      font-size: 34px;
-      margin-bottom: 35px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-    }
-
-    .card {
-      background: rgba(12,12,12,.78);
-      border: 1px solid #54462f;
-      padding: 28px 22px;
-      text-align: center;
-      min-height: 160px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-
-    .card h3 {
-      color: #d5b477;
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .card p {
-      color: #c7c4bd;
-      line-height: 1.6;
-    }
-
-    .about {
-      text-align: center;
-      max-width: 800px;
-      line-height: 1.8;
-      font-size: 18px;
-      color: #d0cdc5;
-    }
-
-    .rules {
-      max-width: 700px;
-      margin: auto;
-      background: rgba(10,10,10,.75);
-      border-left: 3px solid #b08b50;
-      padding: 30px 35px;
-      line-height: 2;
-    }
-
-    footer {
-      border-top: 1px solid #493c28;
-      text-align: center;
-      padding: 35px 20px;
-      color: #777;
-      background: #050505;
-    }
-
-    .gold {
-      color: #d5b477;
-    }
-  </style>
+</style>
 </head>
 
 <body>
 
-<header>
-  <div class="hero">
-    <h1>AUSSIE MAFIA</h1>
+<nav>
 
-    <h2>AUSTRALIAN RUST COMMUNITY</h2>
+<div class="logo">
+AUSSIE MAFIA
+</div>
 
-    <p>
-      PvP • Raiding • Survival • Low Upkeep
-      <br>
-      A relaxed Australian Rust community built around fair play,
-      good competition and having a bloody good time.
-    </p>
+<div class="links">
+<a href="#server">SERVER</a>
+<a href="#about">ABOUT</a>
+<a href="#rules">RULES</a>
+<a href="#community">COMMUNITY</a>
+</div>
 
-    <a class="button" href="#server">SERVER INFO</a>
-    <a class="button secondary" href="#rules">SERVER RULES</a>
-  </div>
+</nav>
+
+
+<header class="hero">
+
+<div class="hero-content">
+
+<div class="eyebrow">
+AUSTRALIAN RUST
+</div>
+
+<h1>
+AUSSIE<br>MAFIA
+</h1>
+
+<h2>
+PVP • FRIENDLY • CHILL
+</h2>
+
+<p>
+An Australian Rust community built around survival,
+raiding, exploration and good competition.
+No egos. No admin advantage. Just Rust.
+</p>
+
+<a href="#server" class="btn">
+SERVER INFO
+</a>
+
+<a href="#rules" class="btn btn-dark">
+SERVER RULES
+</a>
+
+</div>
+
 </header>
 
-<section id="server">
-  <h2 class="section-title">Server Information</h2>
 
-  <div class="cards">
+<section id="server" class="section-dark">
 
-    <div class="card">
-      <h3>50% UPKEEP</h3>
-      <p>
-        Build bigger and spend less time farming just to keep
-        your base alive.
-      </p>
-    </div>
+<div class="section-title">
 
-    <div class="card">
-      <h3>MONTHLY WIPE</h3>
-      <p>
-        Monthly wipe cycle aligned with the official Rust update.
-      </p>
-    </div>
+<span>WELCOME TO THE ISLAND</span>
 
-    <div class="card">
-      <h3>PVP FRIENDLY / CHILL</h3>
-      <p>
-        PvP and raiding without turning the server into a toxic
-        sweat fest.
-      </p>
-    </div>
+<h2>SERVER INFORMATION</h2>
 
-    <div class="card">
-      <h3>AUSTRALIAN</h3>
-      <p>
-        Australian community with a focus on local players and
-        a welcoming atmosphere.
-      </p>
-    </div>
+</div>
 
-  </div>
+
+<div class="cards">
+
+<div class="card">
+
+<div class="number">50%</div>
+
+<h3>LOW UPKEEP</h3>
+
+<p>
+Spend less time farming upkeep and more time
+building, exploring and playing Rust.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="number">01</div>
+
+<h3>MONTHLY WIPE</h3>
+
+<p>
+A monthly wipe cycle giving players time to
+build, progress and create something worth defending.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="number">AU</div>
+
+<h3>AUSTRALIAN</h3>
+
+<p>
+Built for an Australian Rust community with
+a relaxed and welcoming atmosphere.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<div class="number">24/7</div>
+
+<h3>PVP & RAIDING</h3>
+
+<p>
+Fight, raid, defend, trade or explore.
+How you survive is completely up to you.
+</p>
+
+</div>
+
+</div>
+
 </section>
 
-<section>
-  <h2 class="section-title">Welcome to Aussie Mafia</h2>
 
-  <div class="about">
-    <p>
-      Aussie Mafia is about the <span class="gold">community</span>.
-      Whether you're an experienced Rust player, returning after a break,
-      or still learning the game, you're welcome here.
-    </p>
+<section id="about">
 
-    <br>
+<div class="section-title">
 
-    <p>
-      Build. Explore. Trade. Raid. Defend your territory.
-      Make allies, make enemies and create your own story.
-    </p>
-  </div>
+<span>OUR COMMUNITY</span>
+
+<h2>THIS IS AUSSIE MAFIA</h2>
+
+</div>
+
+
+<div class="about">
+
+<p>
+Aussie Mafia isn't about one person.
+It's about the
+<span class="gold">players and the community.</span>
+</p>
+
+<br>
+
+<p>
+Whether you're an experienced Rust veteran,
+coming back after a break, or learning how to survive
+your first wipe, there is a place for you here.
+</p>
+
+<br>
+
+<p>
+Build your base. Run the roads. Visit the traders.
+Make allies. Make enemies. Raid your neighbours.
+Defend what you've built.
+</p>
+
+<br>
+
+<p class="gold">
+Your island. Your story.
+</p>
+
+</div>
+
 </section>
 
-<section id="rules">
-  <h2 class="section-title">The Basics</h2>
 
-  <div class="rules">
-    <p>◆ Respect other players.</p>
-    <p>◆ PvP and raiding are part of Rust.</p>
-    <p>◆ No cheating or exploiting.</p>
-    <p>◆ No racism or extreme toxicity.</p>
-    <p>◆ Play hard. Play fair.</p>
-    <p>◆ Most importantly — have fun.</p>
-  </div>
+<section id="rules" class="section-dark">
+
+<div class="section-title">
+
+<span>KEEP IT SIMPLE</span>
+
+<h2>THE BASICS</h2>
+
+</div>
+
+
+<div class="rules">
+
+<p>◆ PvP and raiding are part of Rust.</p>
+
+<p>◆ No cheating, scripting or exploiting.</p>
+
+<p>◆ No racism or extreme toxicity.</p>
+
+<p>◆ Respect the community.</p>
+
+<p>◆ Admins and moderators do not play on the map.</p>
+
+<p>◆ Play hard. Play fair.</p>
+
+</div>
+
 </section>
+
+
+<section id="community" class="community">
+
+<h2>
+WELCOME TO THE MAFIA
+</h2>
+
+<p>
+From the beach to the last day of wipe,
+Aussie Mafia is a place to build, fight,
+trade and create the kind of stories
+that only happen in Rust.
+</p>
+
+<a href="#server" class="btn">
+EXPLORE THE SERVER
+</a>
+
+</section>
+
 
 <footer>
-  <strong class="gold">AUSSIE MAFIA</strong>
-  <br><br>
-  Australian Rust Community
+
+<strong>
+AUSSIE MAFIA
+</strong>
+
+<br><br>
+
+Australian Rust Community
+
 </footer>
 
 </body>
