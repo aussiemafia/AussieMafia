@@ -1,567 +1,134 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Aussie Mafia — Australian Rust community. PvP, raiding, survival, low upkeep and a friendly chill atmosphere.">
 <title>Aussie Mafia | Australian Rust Community</title>
-
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #090909;
-    color: #eee9df;
-}
-
-/* NAVIGATION */
-
-nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 7%;
-    background: rgba(5,5,5,.94);
-    border-bottom: 1px solid #8c7348;
-}
-
-.logo {
-    color: #d8b77c;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 3px;
-}
-
-nav a {
-    color: #ddd;
-    text-decoration: none;
-    margin-left: 25px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-nav a:hover {
-    color: #d8b77c;
-}
-
-/* HERO */
-
-.hero {
-    min-height: 720px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 80px 20px;
-
-    background:
-        linear-gradient(
-            rgba(0,0,0,.30),
-            rgba(0,0,0,.88)
-        ),
-        radial-gradient(
-            circle at 50% 25%,
-            #856a3f 0%,
-            #382d1e 25%,
-            #111 60%,
-            #050505 100%
-        );
-}
-
-.hero-content {
-    max-width: 1000px;
-}
-
-.eyebrow {
-    color: #d8b77c;
-    letter-spacing: 7px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
-.hero h1 {
-    font-size: clamp(58px, 10vw, 125px);
-    line-height: .9;
-    color: #e1c28b;
-    letter-spacing: 5px;
-
-    text-shadow:
-        0 3px #604821,
-        0 8px 25px rgba(0,0,0,.9);
-}
-
-.hero h2 {
-    margin-top: 24px;
-    font-size: clamp(19px, 3vw, 31px);
-    letter-spacing: 5px;
-    color: #fff;
-}
-
-.hero p {
-    max-width: 720px;
-    margin: 28px auto;
-    font-size: 18px;
-    line-height: 1.8;
-    color: #d5d0c7;
-}
-
-.btn {
-    display: inline-block;
-    margin: 8px;
-    padding: 16px 28px;
-
-    background: #c3a069;
-    color: #080808;
-
-    border: 1px solid #e2c48e;
-
-    text-decoration: none;
-    text-transform: uppercase;
-
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 1px;
-
-    transition: .2s;
-}
-
-.btn:hover {
-    background: #e0c28c;
-    transform: translateY(-3px);
-}
-
-.btn-dark {
-    background: rgba(0,0,0,.55);
-    color: #dfc18a;
-}
-
-/* SECTIONS */
-
-section {
-    padding: 85px 7%;
-}
-
-.section-dark {
-    background: #0d0d0d;
-}
-
-.section-title {
-    text-align: center;
-    margin-bottom: 45px;
-}
-
-.section-title span {
-    color: #a98a58;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 5px;
-}
-
-.section-title h2 {
-    color: #e1c28b;
-    margin-top: 10px;
-    font-size: clamp(30px, 5vw, 46px);
-    letter-spacing: 3px;
-}
-
-/* SERVER FEATURES */
-
-.cards {
-    max-width: 1150px;
-    margin: auto;
-
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(220px, 1fr));
-
-    gap: 20px;
-}
-
-.card {
-    min-height: 190px;
-    padding: 30px 24px;
-
-    text-align: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #181613,
-            #0b0b0b
-        );
-
-    border: 1px solid #55462f;
-}
-
-.card .number {
-    color: #6e5b3c;
-    font-size: 34px;
-    font-weight: 900;
-}
-
-.card h3 {
-    margin: 12px 0;
-    color: #dfbd80;
-    font-size: 20px;
-}
-
-.card p {
-    color: #aaa69e;
-    line-height: 1.6;
-}
-
-/* ABOUT */
-
-.about {
-    max-width: 850px;
-    margin: auto;
-    text-align: center;
-
-    font-size: 19px;
-    line-height: 1.9;
-
-    color: #c9c5bc;
-}
-
-.gold {
-    color: #dfbd80;
-    font-weight: bold;
-}
-
-/* RULES */
-
-.rules {
-    max-width: 800px;
-    margin: auto;
-
-    padding: 38px;
-
-    background: #111;
-    border-left: 4px solid #c09b61;
-}
-
-.rules p {
-    padding: 11px 0;
-    border-bottom: 1px solid #242424;
-    color: #c9c6bf;
-}
-
-/* COMMUNITY */
-
-.community {
-    text-align: center;
-
-    background:
-        radial-gradient(
-            circle,
-            #3b3020,
-            #0c0c0c 65%
-        );
-}
-
-.community h2 {
-    color: #e1c28b;
-    font-size: clamp(35px, 6vw, 60px);
-    letter-spacing: 3px;
-}
-
-.community p {
-    max-width: 700px;
-    margin: 20px auto 30px;
-    line-height: 1.8;
-    color: #c9c5bd;
-}
-
-/* FOOTER */
-
-footer {
-    padding: 40px 20px;
-
-    text-align: center;
-
-    background: #050505;
-
-    border-top: 1px solid #3f3424;
-
-    color: #777;
-}
-
-footer strong {
-    color: #d8b77c;
-    letter-spacing: 4px;
-}
-
-/* MOBILE */
-
-@media(max-width:700px) {
-
-    nav {
-        justify-content: center;
-    }
-
-    nav .links {
-        display: none;
-    }
-
-    .hero {
-        min-height: 620px;
-    }
-
-    section {
-        padding: 65px 20px;
-    }
-}
-
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-<nav>
-
-<div class="logo">
-AUSSIE MAFIA
-</div>
-
-<div class="links">
-<a href="#server">SERVER</a>
-<a href="#about">ABOUT</a>
-<a href="#rules">RULES</a>
-<a href="#community">COMMUNITY</a>
-<a href="vip.html">VIP</a>
-</div>
-
-</nav>
-
-
-<header class="hero">
-
-<div class="hero-content">
-
-<div class="eyebrow">
-AUSTRALIAN RUST
-</div>
-
-<h1>
-AUSSIE<br>MAFIA
-</h1>
-
-<h2>
-PVP • FRIENDLY • CHILL
-</h2>
-
-<p>
-An Australian Rust community built around survival,
-raiding, exploration and good competition.
-No egos. No admin advantage. Just Rust.
-</p>
-
-<a href="#server" class="btn">
-SERVER INFO
-</a>
-
-<a href="#rules" class="btn btn-dark">
-SERVER RULES
-</a>
-
-</div>
-
+<header class="topbar">
+  <div class="wrap nav">
+    <div class="brand">AUSSIE MAFIA</div>
+    <nav class="navlinks">
+      <a href="#server">SERVER</a>
+      <a href="#rules">RULES</a>
+      <a href="#community">COMMUNITY</a>
+      <a class="vip" href="vip.html">VIP</a>
+    </nav>
+  </div>
 </header>
 
-
-<section id="server" class="section-dark">
-
-<div class="section-title">
-
-<span>WELCOME TO THE ISLAND</span>
-
-<h2>SERVER INFORMATION</h2>
-
-</div>
-
-
-<div class="cards">
-
-<div class="card">
-
-<div class="number">50%</div>
-
-<h3>LOW UPKEEP</h3>
-
-<p>
-Spend less time farming upkeep and more time
-building, exploring and playing Rust.
-</p>
-
-</div>
-
-
-<div class="card">
-
-<div class="number">01</div>
-
-<h3>MONTHLY WIPE</h3>
-
-<p>
-A monthly wipe cycle giving players time to
-build, progress and create something worth defending.
-</p>
-
-</div>
-
-
-<div class="card">
-
-<div class="number">AU</div>
-
-<h3>AUSTRALIAN</h3>
-
-<p>
-Built for an Australian Rust community with
-a relaxed and welcoming atmosphere.
-</p>
-
-</div>
-
-
-<div class="card">
-
-<div class="number">24/7</div>
-
-<h3>PVP & RAIDING</h3>
-
-<p>
-Fight, raid, defend, trade or explore.
-How you survive is completely up to you.
-</p>
-
-</div>
-
-</div>
-
+<main>
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="kicker"><span class="dot"></span> Australian Rust Community</div>
+    <h1>AUSSIE <span>MAFIA</span></h1>
+    <p>Built around the players, not one person. PvP, raiding, survival and a relaxed Australian community with low upkeep, monthly wipes and fair administration.</p>
+    <div class="cta">
+      <a class="btn primary" href="#server">SERVER INFO</a>
+      <a class="btn" href="#rules">VIEW RULES</a>
+      <a class="btn" href="vip.html">VIP SUPPORT</a>
+    </div>
+  </div>
 </section>
 
+<section id="server" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">At a glance</div>
+        <h2>Server information</h2>
+      </div>
+      <p class="section-copy">A clean, simple setup designed to give players room to build, fight, raid and enjoy a full wipe without unnecessary grind.</p>
+    </div>
 
-<section id="about">
-
-<div class="section-title">
-
-<span>OUR COMMUNITY</span>
-
-<h2>THIS IS AUSSIE MAFIA</h2>
-
-</div>
-
-
-<div class="about">
-
-<p>
-Aussie Mafia isn't about one person.
-It's about the
-<span class="gold">players and the community.</span>
-</p>
-
-<br>
-
-<p>
-Whether you're an experienced Rust veteran,
-coming back after a break, or learning how to survive
-your first wipe, there is a place for you here.
-</p>
-
-<br>
-
-<p>
-Build your base. Run the roads. Visit the traders.
-Make allies. Make enemies. Raid your neighbours.
-Defend what you've built.
-</p>
-
-<br>
-
-<p class="gold">
-Your island. Your story.
-</p>
-
-</div>
-
+    <div class="stats">
+      <article class="stat">
+        <div class="big">50%</div>
+        <div class="label">Upkeep</div>
+        <p>Less farming for upkeep. More time actually playing Rust.</p>
+      </article>
+      <article class="stat">
+        <div class="big">MONTHLY</div>
+        <div class="label">Wipe cycle</div>
+        <p>Longer progression and more time to build something worth defending.</p>
+      </article>
+      <article class="stat">
+        <div class="big">AEST</div>
+        <div class="label">Australian time</div>
+        <p>Queensland time, UTC+10, all year round.</p>
+      </article>
+      <article class="stat">
+        <div class="big">PVP</div>
+        <div class="label">Friendly / chill</div>
+        <p>Competition is welcome. Extreme toxicity is not.</p>
+      </article>
+    </div>
+  </div>
 </section>
 
+<section class="section">
+  <div class="wrap grid2">
+    <article class="panel">
+      <div class="eyebrow">Server identity</div>
+      <h3>What Aussie Mafia is about</h3>
+      <p class="section-copy">Aussie Mafia is a community-first Rust server. New players, returning players and experienced players are all welcome. Build, trade, explore, raid, defend your base and create your own wipe story.</p>
+      <div class="rows">
+        <div class="row"><span>Gameplay</span><strong>PvP • Raiding • Survival</strong></div>
+        <div class="row"><span>Upkeep</span><strong>50%</strong></div>
+        <div class="row"><span>Wipe</span><strong>Monthly</strong></div>
+        <div class="row"><span>Administration</span><strong>No admins playing on the map</strong></div>
+      </div>
+    </article>
 
-<section id="rules" class="section-dark">
-
-<div class="section-title">
-
-<span>KEEP IT SIMPLE</span>
-
-<h2>THE BASICS</h2>
-
-</div>
-
-
-<div class="rules">
-
-<p>◆ PvP and raiding are part of Rust.</p>
-
-<p>◆ No cheating, scripting or exploiting.</p>
-
-<p>◆ No racism or extreme toxicity.</p>
-
-<p>◆ Respect the community.</p>
-
-<p>◆ Admins and moderators do not play on the map.</p>
-
-<p>◆ Play hard. Play fair.</p>
-
-</div>
-
+    <article class="panel">
+      <div class="eyebrow">Fair play</div>
+      <h3>Simple administration</h3>
+      <p class="section-copy">The server is managed around fairness. Admins and moderators do not play on the map, keeping staff decisions separate from normal gameplay.</p>
+      <p><span class="badge">FAIR PLAY GUARANTEE</span></p>
+    </article>
+  </div>
 </section>
 
-
-<section id="community" class="community">
-
-<h2>
-WELCOME TO THE MAFIA
-</h2>
-
-<p>
-From the beach to the last day of wipe,
-Aussie Mafia is a place to build, fight,
-trade and create the kind of stories
-that only happen in Rust.
-</p>
-
-<a href="#server" class="btn">
-EXPLORE THE SERVER
-</a>
-
+<section id="rules" class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Keep it simple</div>
+        <h2>Server rules</h2>
+      </div>
+      <p class="section-copy">Rust is supposed to be dangerous. The rules are there to protect fair play, not remove the game.</p>
+    </div>
+    <ul class="rulelist">
+      <li><b>01.</b> PvP and raiding are part of Rust.</li>
+      <li><b>02.</b> No cheating, scripting or exploiting.</li>
+      <li><b>03.</b> No racism or extreme toxicity.</li>
+      <li><b>04.</b> Respect the wider community.</li>
+      <li><b>05.</b> Admins and moderators do not play on the map.</li>
+      <li><b>06.</b> Play hard. Play fair.</li>
+    </ul>
+  </div>
 </section>
 
+<section id="community" class="section">
+  <div class="wrap">
+    <div class="vip-strip">
+      <div class="eyebrow">Support Aussie Mafia</div>
+      <h3>VIP is available</h3>
+      <p>Supporters can receive an in-game VIP tag and access to available VIP kits. VIP support helps with hosting and continued server development.</p>
+      <div class="cta">
+        <a class="btn primary" href="vip.html">VIEW VIP</a>
+        <a class="btn" href="https://ko-fi.com/aussiemafia" target="_blank" rel="noopener">VISIT KO-FI</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
-<footer>
-
-<strong>
-AUSSIE MAFIA
-</strong>
-
-<br><br>
-
-Australian Rust Community
-
+<footer class="footer">
+  <div class="wrap"><strong>AUSSIE MAFIA</strong><br><br>Australian Rust Community</div>
 </footer>
-
 </body>
 </html>
