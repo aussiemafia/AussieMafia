@@ -117,7 +117,7 @@ a{color:inherit}
   min-height:420px;display:flex;align-items:flex-end;
   background:
     linear-gradient(to top,rgba(7,9,11,.98),rgba(7,9,11,.35)),
-    url("vip-banner.png") center/cover no-repeat;
+    url("vip-banner.png.png") center/cover no-repeat;
 }
 .hero-small .hero-inner{padding:120px 0 55px}
 .hero-small h1{font-size:clamp(3rem,8vw,6.5rem);margin:12px 0;color:var(--sand2)}
