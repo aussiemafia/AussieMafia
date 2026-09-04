@@ -1,0 +1,140 @@
+
+:root{
+  --bg:#07090b;
+  --panel:#0d1115;
+  --panel2:#11171d;
+  --line:#27313a;
+  --sand:#d4b27a;
+  --sand2:#f0d5a5;
+  --text:#f3f0e8;
+  --muted:#aeb6bd;
+  --good:#80c98b;
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#131a20 0,#090c0f 35%,#07090b 70%);
+  color:var(--text);
+}
+a{color:inherit}
+.wrap{width:min(1180px,92%);margin:auto}
+.topbar{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px);
+  background:rgba(7,9,11,.86);
+  border-bottom:1px solid rgba(212,178,122,.18);
+}
+.nav{
+  min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.brand{font-weight:900;letter-spacing:.18em;color:var(--sand2)}
+.navlinks{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.navlinks a{text-decoration:none;color:#d9dde0;font-weight:700;font-size:.86rem;letter-spacing:.08em}
+.navlinks a:hover{color:var(--sand2)}
+.navlinks .vip{padding:10px 14px;border:1px solid var(--sand);border-radius:8px;color:var(--sand2)}
+.hero{
+  min-height:760px;
+  display:flex;align-items:flex-end;
+  background:
+    linear-gradient(to top,rgba(7,9,11,.98) 0%,rgba(7,9,11,.70) 35%,rgba(7,9,11,.15) 72%),
+    linear-gradient(to right,rgba(7,9,11,.5),rgba(7,9,11,.05)),
+    url("assets/aussie-mafia-hero.png") center/cover no-repeat;
+  border-bottom:1px solid rgba(212,178,122,.18);
+}
+.hero-inner{padding:120px 0 70px}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  color:var(--sand2);font-weight:800;letter-spacing:.2em;font-size:.78rem;text-transform:uppercase
+}
+.dot{width:8px;height:8px;border-radius:999px;background:var(--good);box-shadow:0 0 16px rgba(128,201,139,.7)}
+.hero h1{font-size:clamp(3.8rem,10vw,8.5rem);line-height:.82;margin:20px 0 22px;letter-spacing:-.05em}
+.hero h1 span{display:block;color:var(--sand2)}
+.hero p{max-width:760px;color:#e2e3df;font-size:1.08rem;line-height:1.75;text-shadow:0 2px 12px #000}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;
+  border-radius:8px;text-decoration:none;font-weight:900;letter-spacing:.06em;font-size:.86rem;
+  border:1px solid var(--line);background:#11171d
+}
+.btn.primary{background:var(--sand);color:#111;border-color:var(--sand)}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.section{padding:78px 0}
+.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:26px}
+.eyebrow{color:var(--sand);text-transform:uppercase;font-weight:900;letter-spacing:.18em;font-size:.76rem}
+.section h2{font-size:clamp(2rem,4vw,3.5rem);margin:.35rem 0 0}
+.section-copy{color:var(--muted);max-width:620px;line-height:1.7}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+}
+.stat{
+  background:linear-gradient(180deg,#11171d,#0c1115);
+  border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)
+}
+.stat .big{font-size:2.2rem;font-weight:950;color:var(--sand2);letter-spacing:-.04em}
+.stat .label{margin-top:6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#c7cdd2;font-weight:800}
+.stat p{color:var(--muted);line-height:1.55;margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.panel{
+  background:linear-gradient(180deg,rgba(17,23,29,.96),rgba(12,17,21,.96));
+  border:1px solid var(--line);border-radius:14px;padding:28px;box-shadow:var(--shadow)
+}
+.panel h3{margin-top:0;color:var(--sand2);font-size:1.4rem}
+.rows{display:grid;gap:10px;margin-top:18px}
+.row{
+  display:flex;justify-content:space-between;gap:18px;align-items:center;
+  padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)
+}
+.row:last-child{border-bottom:none}
+.row span:first-child{color:var(--muted)}
+.row strong{color:#fff}
+.rulelist{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rulelist li{
+  padding:14px 16px;border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  background:#0a0e12;color:#d7dadd
+}
+.rulelist li b{color:var(--sand2)}
+.vip-strip{
+  position:relative;overflow:hidden;
+  background:
+    linear-gradient(120deg,rgba(212,178,122,.16),rgba(212,178,122,.02)),
+    #0c1115;
+  border:1px solid rgba(212,178,122,.35);border-radius:18px;padding:34px
+}
+.vip-strip h3{font-size:2rem;margin:0 0 8px;color:var(--sand2)}
+.vip-strip p{color:var(--muted);max-width:740px;line-height:1.7}
+.footer{padding:38px 0 55px;border-top:1px solid rgba(255,255,255,.07);color:#7f8991}
+.footer strong{color:var(--sand2);letter-spacing:.18em}
+.badge{
+  display:inline-block;padding:7px 10px;border-radius:999px;
+  background:rgba(128,201,139,.12);border:1px solid rgba(128,201,139,.25);
+  color:#9ee4a8;font-size:.78rem;font-weight:900;letter-spacing:.08em
+}
+.hero-small{
+  min-height:420px;display:flex;align-items:flex-end;
+  background:
+    linear-gradient(to top,rgba(7,9,11,.98),rgba(7,9,11,.35)),
+    url("assets/aussie-mafia-hero.png") center/cover no-repeat;
+}
+.hero-small .hero-inner{padding:120px 0 55px}
+.hero-small h1{font-size:clamp(3rem,8vw,6.5rem);margin:12px 0;color:var(--sand2)}
+.vipcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vipcard{padding:26px;border-radius:14px;background:#0d1318;border:1px solid var(--line)}
+.vipcard h3{color:var(--sand2);margin-top:0}
+.vipcard p{color:var(--muted);line-height:1.65}
+.notice{padding:18px 20px;border-left:3px solid var(--sand);background:#0c1115;color:#c8ced3;line-height:1.65}
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid2,.vipcards{grid-template-columns:1fr}
+  .navlinks{gap:12px}.navlinks a{font-size:.75rem}
+}
+@media(max-width:620px){
+  .navlinks a:not(.vip){display:none}
+  .stats{grid-template-columns:1fr}
+  .hero{min-height:650px;background-position:58% center}
+  .hero-inner{padding-bottom:45px}
+  .section{padding:58px 0}
+}
