@@ -80,8 +80,27 @@ a{color:inherit}
   display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
 }
 .stat{
-  background:linear-gradient(180deg,#11171d,#0c1115);
-  border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(145deg,rgba(255,224,150,.07),transparent 35%),
+    linear-gradient(180deg,#15120d 0%,#090909 55%,#050505 100%);
+  border:1px solid rgba(214,168,79,.42);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:
+    0 24px 55px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,238,190,.10),
+    0 0 24px rgba(214,168,79,.05);
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+.stat:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,224,150,.72);
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,238,190,.16),
+    0 0 32px rgba(214,168,79,.12);
 }
 .stat .big{font-size:2.2rem;font-weight:950;color:var(--sand2);letter-spacing:-.04em}
 .stat .label{margin-top:6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#c7cdd2;font-weight:800}
