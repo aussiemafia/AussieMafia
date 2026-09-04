@@ -66,11 +66,19 @@ a{color:inherit}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 18px;
-  border-radius:8px;text-decoration:none;font-weight:900;letter-spacing:.06em;font-size:.86rem;
+  border-radius:10px;text-decoration:none;font-weight:900;letter-spacing:.06em;font-size:.86rem;
   border:1px solid var(--line);background:#11171d
 }
-.btn.primary{background:var(--sand);color:#111;border-color:var(--sand)}
-.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+.btn.primary{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold),var(--gold-dark));
+  color:#090909;
+  border-color:var(--gold-bright);
+  box-shadow:0 8px 25px rgba(214,168,79,.20),inset 0 1px 0 rgba(255,255,255,.25);}
+.btn:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+  box-shadow:0 12px 30px rgba(214,168,79,.28);
+}
 .section{padding:78px 0}
 .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:26px}
 .eyebrow{color:var(--sand);text-transform:uppercase;font-weight:900;letter-spacing:.18em;font-size:.76rem}
