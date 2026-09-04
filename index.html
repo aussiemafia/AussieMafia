@@ -153,7 +153,7 @@
 
       <article class="stat">
         <div class="big" id="server-status">CHECKING...</div>
-        <div class="label">Server</div>
+        <div class="label">PLAYERS ONLINE</div>
         <p>Aussie Mafia Australian Rust Server</p>
       </article>
 
@@ -291,7 +291,18 @@
   <div class="wrap"><strong>AUSSIE MAFIA</strong><br><br>Australian Rust Community</div>
 </footer>
  <script>
-  document.getElementById("server-status").innerText = "LIVE STATUS";
+fetch("https://api.battlemetrics.com/servers/40453506")
+  .then(response => response.json())
+  .then(data => {
+    const server = data.data.attributes;
+
+    document.getElementById("server-status").innerText =
+      server.players + " / " + server.maxPlayers;
+  })
+  .catch(error => {
+    document.getElementById("server-status").innerText = "STATUS";
+    console.error("Server status error:", error);
+  });
 </script> 
 </body>
 </html>
