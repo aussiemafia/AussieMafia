@@ -68,6 +68,15 @@ a{color:inherit}
   white-space:nowrap;
 }
 .hero h1 span{display:inline;color:var(--sand2)}
+.hero-tagline{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:1.35rem;
+  font-weight:400;
+  letter-spacing:.22em;
+  color:#fff;
+  margin:0 0 14px;
+  text-transform:uppercase;
+}
 .hero p{max-width:760px;color:#e2e3df;font-size:1.08rem;line-height:1.75;text-shadow:0 2px 12px #000}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .btn{
