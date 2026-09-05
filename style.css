@@ -51,7 +51,7 @@ a{color:inherit}
   background:
     linear-gradient(to top,rgba(7,9,11,.98) 0%,rgba(7,9,11,.70) 35%,rgba(7,9,11,.15) 72%),
     linear-gradient(to right,rgba(7,9,11,.5),rgba(7,9,11,.05)),
-    url("aussie-mafia-hero.png") center/cover no-repeat;
+    url("aussie-mafia-hero.png") center/contain no-repeat;
   border-bottom:1px solid rgba(212,178,122,.18);
 }
 .hero-inner{padding:120px 0 70px}
