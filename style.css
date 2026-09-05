@@ -25,9 +25,8 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(circle at top,#131a20 0,#090c0f 35%,#07090b 70%);
-  color:var(--text);
+  background:transparent;
+    color:var(--text);
 }
 a{color:inherit}
 .wrap{width:min(1180px,92%);margin:auto}
