@@ -217,4 +217,22 @@ body > *:not(.video-background){
   position:relative;
   z-index:1;
 }
+.map-page{
+  padding:70px 0 90px;
+}
 
+.map-panel{
+  background:rgba(5,5,5,.82);
+  border:1px solid rgba(214,168,79,.45);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 28px 70px rgba(0,0,0,.65);
+  backdrop-filter:blur(8px);
+}
+
+.map-panel img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+}
