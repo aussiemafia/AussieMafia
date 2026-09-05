@@ -236,3 +236,14 @@ body > *:not(.video-background){
   height:auto;
   border-radius:12px;
 }
+.map-btn{
+  background:rgba(5,5,5,.72);
+  border:1px solid var(--sand);
+  gap:10px;
+}
+
+.map-icon{
+  font-size:1.5rem;
+  line-height:1;
+  color:#fff;
+}
