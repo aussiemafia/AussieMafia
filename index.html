@@ -381,13 +381,18 @@
         <a class="btn primary" href="vip.html">
           VIEW VIP BENEFITS
         </a>
+        
 
-        <a class="btn"
+      <a class="btn"
            href="https://ko-fi.com/aussiemafia"
            target="_blank"
            rel="noopener noreferrer">
           SUPPORT AUSSIE MAFIA
         </a>
+        <div class="website-visits">
+  👁 WEBSITE VISITS
+  <strong id="website-visit-count">—</strong>
+</div>
       </div>
     </div>
 
@@ -398,6 +403,16 @@
 <footer class="footer">
   <div class="wrap"><strong>AUSSIE MAFIA</strong><br><br>Australian Rust Community</div>
 </footer>
+  <script>
+fetch('https://aussiemafia.goatcounter.com/counter/TOTAL.json')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('website-visit-count').textContent = data.count;
+  })
+  .catch(() => {
+    document.getElementById('website-visit-count').textContent = '—';
+  });
+</script>
  
 </body>
 </html>
