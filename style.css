@@ -40,6 +40,11 @@ a{color:inherit}
   min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:24px;
 }
 .brand{font-weight:900;letter-spacing:.18em;color:var(--sand2)}
+.brand img{
+  display:block;
+  width:150px;
+  height:auto;
+}
 .navlinks{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .navlinks a{text-decoration:none;color:#d9dde0;font-weight:700;font-size:.86rem;letter-spacing:.08em}
 .navlinks a:hover{color:var(--sand2)}
