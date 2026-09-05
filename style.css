@@ -42,7 +42,7 @@ a{color:inherit}
 .brand{font-weight:900;letter-spacing:.18em;color:var(--sand2)}
 .brand img{
   display:block;
-  width:150px;
+  width:220px;
   height:auto;
 }
 .navlinks{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
