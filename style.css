@@ -59,6 +59,11 @@ a{color:inherit}
   border-bottom:1px solid rgba(212,178,122,.18);
 }
 .hero-inner{padding:120px 0 70px}
+.hero-logo{
+  display:block;
+  width:min(700px,90%);
+  height:auto;
+}
 .kicker{
   display:inline-flex;align-items:center;gap:10px;
   color:var(--sand2);font-weight:800;letter-spacing:.2em;font-size:.78rem;text-transform:uppercase
