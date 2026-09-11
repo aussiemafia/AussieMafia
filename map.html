@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Aussie Mafia Map</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .map-live-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+
+    .map-live-info .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-frame-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 720px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: rgba(0,0,0,.35);
+    }
+
+    .map-frame {
+      display: block;
+      width: 100%;
+      height: 78vh;
+      min-height: 720px;
+      border: 0;
+      background: #111;
+    }
+
+    .map-loading {
+      padding: 34px 20px;
+      text-align: center;
+    }
+
+    .map-actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .map-fallback {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    @media (max-width: 800px) {
+      .map-frame-wrap,
+      .map-frame {
+        min-height: 560px;
+        height: 70vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="video-background">
+    <video autoplay muted loop playsinline>
+      <source src="aussie-mafia-background.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <header class="topbar">
+    <div class="wrap nav">
+
+      <div class="brand">
+        <img src="aussie-mafia-logo.png.png" alt="Aussie Mafia">
+      </div>
+
+      <nav class="navlinks">
+        <a href="index.html">HOME</a>
+        <a href="map.html">MAP</a>
+        <a href="index.html#server">SERVER</a>
+        <a href="index.html#rules">RULES</a>
+        <a href="vip.html" class="vip">VIP</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="map-page">
+    <div class="wrap">
+
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">CURRENT WIPE</div>
+          <h2 id="map-title">Aussie Mafia Live Map</h2>
+        </div>
+      </div>
+
+      <div class="map-live-info">
+        <span class="badge" id="map-status">CHECKING CURRENT MAP...</span>
+        <span class="badge" id="map-size" style="display:none"></span>
+        <span class="badge" id="map-seed" style="display:none"></span>
+      </div>
+
+      <div class="map-panel">
+        <div class="map-frame-wrap" id="map-container">
+          <div class="map-loading" id="map-loading">
+            Loading the current Aussie Mafia map from the live server information...
+          </div>
+        </div>
+
+        <div class="map-actions">
+          <a class="btn primary" id="open-rustmaps" href="https://www.battlemetrics.com/servers/rust/40453506" target="_blank" rel="noopener noreferrer">
+            VIEW CURRENT MAP
+          </a>
+          <a class="btn" href="https://www.battlemetrics.com/servers/rust/40453506" target="_blank" rel="noopener noreferrer">
+            BATTLEMETRICS
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Aussie Mafia BattleMetrics server ID.
+    // BattleMetrics reports the current Rust world seed and world size.
+    const BATTLEMETRICS_SERVER_ID = '40453506';
+    const BATTLEMETRICS_API = `https://api.battlemetrics.com/servers/${BATTLEMETRICS_SERVER_ID}`;
+
+    const statusEl = document.getElementById('map-status');
+    const sizeEl = document.getElementById('map-size');
+    const seedEl = document.getElementById('map-seed');
+    const titleEl = document.getElementById('map-title');
+    const container = document.getElementById('map-container');
+    const openMapButton = document.getElementById('open-rustmaps');
+
+    function showFallback(message) {
+      statusEl.textContent = message || 'LIVE MAP UNAVAILABLE — SHOWING SAVED MAP';
+      container.innerHTML = '<img class="map-fallback" src="map.html.png" alt="Aussie Mafia saved map">';
+    }
+
+    async function loadCurrentMap() {
+      try {
+        const response = await fetch(BATTLEMETRICS_API, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`BattleMetrics returned ${response.status}`);
+
+        const payload = await response.json();
+        const attributes = payload?.data?.attributes || {};
+        const details = attributes.details || {};
+
+        const seed = Number(details.rust_world_seed);
+        const size = Number(details.rust_world_size);
+
+        if (!Number.isFinite(seed) || !Number.isFinite(size) || seed < 0 || size <= 0) {
+          throw new Error('Current seed or world size was not available');
+        }
+
+        const rustMapsUrl = `https://rustmaps.com/map/${size}_${seed}`;
+
+        titleEl.textContent = 'Current Aussie Mafia Map';
+        statusEl.textContent = attributes.status === 'online' ? 'LIVE SERVER DATA' : 'CURRENT SERVER DATA';
+        sizeEl.textContent = `SIZE ${size}`;
+        seedEl.textContent = `SEED ${seed}`;
+        sizeEl.style.display = 'inline-flex';
+        seedEl.style.display = 'inline-flex';
+        openMapButton.href = rustMapsUrl;
+
+        // The page automatically follows the seed/size reported by BattleMetrics.
+        // RustMaps is loaded inside the existing MAP page. If RustMaps prevents
+        // embedding in a browser, the VIEW CURRENT MAP button still opens the
+        // correct live map directly in a new tab.
+        container.innerHTML = `
+          <iframe
+            class="map-frame"
+            src="${rustMapsUrl}"
+            title="Aussie Mafia current Rust map"
+            loading="eager"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>`;
+
+      } catch (error) {
+        console.error('Could not load live map information:', error);
+        showFallback('LIVE MAP CHECK FAILED — SHOWING SAVED MAP');
+      }
+    }
+
+    loadCurrentMap();
+  </script>
+
+</body>
+</html>
