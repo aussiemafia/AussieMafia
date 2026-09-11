@@ -2,8 +2,6 @@ name: Update Aussie Mafia Map
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
 
 permissions:
   contents: write
@@ -16,101 +14,88 @@ jobs:
       - name: Checkout website
         uses: actions/checkout@v4
 
-      - name: Get current server map
+      - name: Download current Rust map
         env:
           RUSTMAPS_API_KEY: ${{ secrets.RUSTMAPS_API_KEY }}
-        shell: bash
         run: |
-          set -e
-
-          SERVER_ID="40453506"
-
-          echo "Checking Aussie Mafia server..."
-
-          curl -fsSL \
-            "https://api.battlemetrics.com/servers/${SERVER_ID}" \
-            -o server.json
-
           python3 <<'PY'
           import json
           import os
+          import urllib.request
+
+          SIZE = "3500"
+          SEED = "1752646769"
+
+          url = f"https://api.rustmaps.com/v4/maps/{SIZE}/{SEED}?staging=false"
+
+          request = urllib.request.Request(
+              url,
+              headers={
+                  "X-API-Key": os.environ["RUSTMAPS_API_KEY"],
+                  "Content-Type": "application/json"
+              }
+          )
+
+          print(f"Requesting Rust map {SIZE}_{SEED}...")
+
+          with urllib.request.urlopen(request) as response:
+              data = json.load(response)
+
+          image_url = data.get("imageUrl")
+
+          if not image_url:
+              raise Exception("RustMaps did not return an imageUrl")
+
+          print("Map image found:", image_url)
+
+          with urllib.request.urlopen(image_url) as response:
+              image = response.read()
+
+          with open("current-map.jpg", "wb") as f:
+              f.write(image)
+
+          print("Saved current-map.jpg")
+          PY
+
+      - name: Update map page
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
           import re
-          import sys
 
-          with open("server.json", "r", encoding="utf-8") as f:
-              data = json.load(f)
+          path = Path("map.html")
+          html = path.read_text(encoding="utf-8")
 
-          attrs = data["data"]["attributes"]
-          details = attrs.get("details", {})
+          html = re.sub(
+              r'<img[^>]+class="current-map"[^>]*>',
+              '<img class="current-map" src="current-map.jpg" alt="Current Aussie Mafia Rust Map">',
+              html
+          )
 
-          seed = details.get("rust_world_seed")
-          size = details.get("rust_world_size")
-
-          if seed is None or size is None:
-              print("Could not find Rust seed/size in BattleMetrics.")
-              print(json.dumps(details, indent=2))
-              sys.exit(1)
-
-          seed = str(seed)
-          size = str(size)
-
-          print(f"Current map: size={size}, seed={seed}")
-
-          map_url = f"https://rustmaps.com/map/{size}_{seed}"
-
-          path = "map.html"
-
-          with open(path, "r", encoding="utf-8") as f:
-              html = f.read()
-
-          # Replace the current RustMaps link stored in the page.
-          if 'id="live-map-link"' in html:
-              html = re.sub(
-                  r'href="https://rustmaps\.com/map/[^"]*" id="live-map-link"',
-                  f'href="{map_url}" id="live-map-link"',
-                  html
-              )
-          else:
-              # Replace the existing map image panel with a live-map button.
+          if 'class="current-map"' not in html:
               html = re.sub(
                   r'<div class="map-panel">.*?</div>',
-                  f'''<div class="map-panel">
-            <a href="{map_url}" id="live-map-link"
-               target="_blank" rel="noopener noreferrer"
-               class="btn primary">
-              VIEW CURRENT LIVE MAP
-            </a>
-            <p style="margin-top:18px;">
-              Current map: {size} &nbsp;•&nbsp; Seed {seed}
-            </p>
+                  '''<div class="map-panel">
+            <img class="current-map" src="current-map.jpg" alt="Current Aussie Mafia Rust Map">
           </div>''',
                   html,
                   count=1,
                   flags=re.DOTALL
               )
 
-          # Keep displayed seed/size current on later runs.
-          html = re.sub(
-              r'Current map: \d+ &nbsp;•&nbsp; Seed \d+',
-              f'Current map: {size} &nbsp;•&nbsp; Seed {seed}',
-              html
-          )
-
-          with open(path, "w", encoding="utf-8") as f:
-              f.write(html)
+          path.write_text(html, encoding="utf-8")
           PY
 
-      - name: Commit map change
-        shell: bash
+      - name: Commit updated map
         run: |
-          if git diff --quiet; then
-            echo "Map has not changed."
+          if git diff --quiet && [ -z "$(git status --porcelain current-map.jpg)" ]; then
+            echo "No map changes detected."
             exit 0
           fi
 
           git config user.name "Aussie Mafia Map Bot"
           git config user.email "actions@github.com"
 
-          git add map.html
-          git commit -m "Auto-update current Rust map"
+          git add map.html current-map.jpg
+          git commit -m "Update current Rust map"
           git push
