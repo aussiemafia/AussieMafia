@@ -23,3 +23,12 @@
 #bannerNote{display:block;line-height:1.5}
 @media(max-width:1000px){.server-strip{grid-template-columns:2fr 1fr 1fr}.server-strip button{grid-column:1/-1}.server-strip>div:nth-child(3){border-right:0}}
 @media(max-width:700px){.server-strip{grid-template-columns:1fr 1fr}.server-strip .battlemetrics-status{grid-column:1/-1;border-right:0;border-bottom:1px solid var(--line);padding:0 0 20px}.server-strip>div:nth-child(2){border-right:1px solid var(--line)}.server-strip>div:nth-child(3){border-right:0}.battlemetrics-banner-link{width:100%}}
+
+/* Show only the player-count area of the existing, updating public banner. */
+.server-strip{grid-template-columns:1fr 1fr 1fr auto}
+.battlemetrics-banner-link{width:max-content;max-width:100%;margin:13px 0 6px}
+.player-count-window{position:relative;display:block;overflow:hidden;width:140px;height:46px}
+.player-count-window #bmBanner{position:absolute;width:1000px!important;height:160px!important;max-width:none;left:-208px;top:-58px;aspect-ratio:auto}
+.screen-reader-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap;border:0!important}
+@media(max-width:1000px){.server-strip{grid-template-columns:1fr 1fr 1fr}.server-strip button{grid-column:1/-1}}
+@media(max-width:700px){.server-strip{grid-template-columns:1fr 1fr}.server-strip .battlemetrics-status{grid-column:auto;border-bottom:0;border-right:1px solid var(--line);padding:0 18px 0 0}.server-strip>div:nth-child(2){border-right:0}.server-strip>div:nth-child(3){grid-column:1/-1}.battlemetrics-banner-link{width:max-content}}
