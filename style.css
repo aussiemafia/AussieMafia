@@ -12,3 +12,14 @@
 .visitor-counter span{font-size:10px;line-height:1.6;color:#d0d8c4}
 @media(max-width:1000px){.hero{min-height:940px}.hero-content{padding-top:310px}.hero-brand-logo{width:min(590px,68vw);top:110px;max-height:180px}}
 @media(max-width:700px){.hero{height:auto;min-height:940px}.hero-brand-logo{top:105px;width:88%;max-height:145px}.hero-content{padding-top:290px;padding-bottom:135px}.hero-bottom{flex-wrap:wrap;gap:18px;bottom:34px}.hero-bottom>a{display:none}.hero-bottom .visitor-counter{display:flex}.visitor-counter strong{font-size:28px}.visitor-counter span{font-size:9px}.hero-scene video{object-position:center}}
+
+/* Public BattleMetrics banner replaces API-dependent status cards. */
+.server-strip{grid-template-columns:minmax(360px,2.2fr) 1fr 1fr auto}
+.server-strip .battlemetrics-status{min-width:0}
+.battlemetrics-banner-link{display:block;width:min(100%,500px);margin:12px 0 9px}
+.battlemetrics-banner-link img{display:block;width:100%;height:auto;aspect-ratio:500/80;border:0}
+.battlemetrics-banner-link img[hidden]{display:none}
+#bannerFallback{font-size:15px;line-height:1.6;color:var(--accent);text-decoration:underline}
+#bannerNote{display:block;line-height:1.5}
+@media(max-width:1000px){.server-strip{grid-template-columns:2fr 1fr 1fr}.server-strip button{grid-column:1/-1}.server-strip>div:nth-child(3){border-right:0}}
+@media(max-width:700px){.server-strip{grid-template-columns:1fr 1fr}.server-strip .battlemetrics-status{grid-column:1/-1;border-right:0;border-bottom:1px solid var(--line);padding:0 0 20px}.server-strip>div:nth-child(2){border-right:1px solid var(--line)}.server-strip>div:nth-child(3){border-right:0}.battlemetrics-banner-link{width:100%}}
