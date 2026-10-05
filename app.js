@@ -16,3 +16,19 @@ let zoom=1,panX=0,panY=0,drag=null;const stage=$('#mapStage'),layer=$('#mapLayer
 
 async function refreshPlayers(){const refresh=$('#refresh');if(refresh.disabled)return;refresh.disabled=true;$('#status').textContent='Updating…';try{const r=await fetch('https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.html',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error();const doc=new DOMParser().parseFromString(await r.text(),'text/html');if(doc.querySelector('#server-name a')?.getAttribute('href')!=='https://www.battlemetrics.com/servers/rust/40453506')throw Error();const match=doc.querySelector('#server-players')?.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/);if(!match||+match[2]<1)throw Error();$('#players').textContent=Number(match[1])+' / '+Number(match[2]);$('#status').textContent='Player count · may be delayed';$('.dock-status').style.background='#94c68b'}catch{$('#players').textContent='— / —';$('#status').textContent='Count unavailable';$('.dock-status').style.background='#8493a3'}finally{refresh.disabled=false}}
 $('#refresh').onclick=refreshPlayers;refreshPlayers();setInterval(()=>{if(!document.hidden)refreshPlayers()},300000);
+
+// Background music supplied by the site owner. Try on load, then retry on a user gesture if blocked.
+const backgroundMusic=document.getElementById('backgroundMusic');
+backgroundMusic.volume=0.3;
+let musicStarting=false;
+const musicGestures=['pointerdown','click','touchend','keydown'];
+function stopMusicRetries(){musicGestures.forEach(type=>document.removeEventListener(type,startBackgroundMusic,true));}
+async function startBackgroundMusic(){
+ if(musicStarting||!backgroundMusic.paused)return;
+ musicStarting=true;
+ try{await backgroundMusic.play();stopMusicRetries();}catch{/* Browser requires a user gesture; leave listeners ready. */}
+ finally{musicStarting=false;}
+}
+backgroundMusic.addEventListener('playing',stopMusicRetries);
+musicGestures.forEach(type=>document.addEventListener(type,startBackgroundMusic,{capture:true,passive:true}));
+startBackgroundMusic();
