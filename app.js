@@ -1,61 +1,18 @@
-'use strict';
+"use strict";
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-$('#year').textContent=new Date().getFullYear();
-let toastTimer;function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3000)}
-$$('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('Copied. Ready to paste.')}catch{toast('Copy unavailable. Select the address or command and copy it manually.')}}));
-const help=$('#help');$('#connectHelp').onclick=()=>help.showModal();$('.dialog-close').onclick=()=>help.close();help.addEventListener('click',e=>{if(e.target===help){const r=help.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)help.close()}});
-$('#menu').onclick=()=>{const open=$('#nav').classList.toggle('open');$('#menu').setAttribute('aria-expanded',String(open));$('#menu').setAttribute('aria-label',open?'Close navigation':'Open navigation')};$$('#nav a').forEach(a=>a.onclick=()=>{$('#nav').classList.remove('open');$('#menu').setAttribute('aria-expanded','false');$('#menu').setAttribute('aria-label','Open navigation')});
-const reduceQuery=matchMedia('(prefers-reduced-motion: reduce)');let motionOff=reduceQuery.matches;const heroVideo=$('#heroVideo');function syncVideo(){if(!heroVideo)return;if(motionOff){heroVideo.pause()}else{heroVideo.play().catch(()=>{toast('Your browser paused the background video. Use Enable motion to try again.');motionOff=true;applyMotion()})}}heroVideo?.addEventListener('error',()=>{heroVideo.hidden=true});heroVideo?.querySelector('source')?.addEventListener('error',()=>{heroVideo.hidden=true});let animationContext;let activeMotion=[];
-function applyMotion(){syncVideo();animationContext?.revert();activeMotion.forEach(a=>a.stop?.());activeMotion=[];document.body.classList.toggle('motion-paused',motionOff);$('#motionToggle').textContent=motionOff?'Enable motion':'Pause motion';$('#motionToggle').setAttribute('aria-pressed',String(motionOff));if(motionOff||!window.gsap)return;gsap.registerPlugin(ScrollTrigger);animationContext=gsap.context(()=>{gsap.from('.hero-content .eyebrow, h1>span, h1 strong, .hero-content>p, .hero-cta',{y:25,opacity:0,duration:.95,stagger:.13,ease:'power3.out',clearProps:'transform,opacity'});gsap.to('.hero-scene',{yPercent:14,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});$$('.reveal').forEach(el=>gsap.from(el,{y:30,opacity:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 94%',once:true},clearProps:'transform,opacity'}));gsap.to('.scroll-progress',{scaleX:1,ease:'none',scrollTrigger:{start:0,end:'max',scrub:.2}})});}
-$('#motionToggle').onclick=()=>{motionOff=!motionOff;applyMotion()};reduceQuery.addEventListener('change',e=>{motionOff=e.matches;applyMotion()});applyMotion();
-// Motion powers small interaction responses independently of GSAP's scroll timelines.
-$$('.button').forEach(b=>{b.addEventListener('pointerenter',()=>{if(!motionOff&&window.Motion)activeMotion.push(Motion.animate(b,{y:-3},{type:'spring',stiffness:320,damping:20}))});b.addEventListener('pointerleave',()=>{if(window.Motion)activeMotion.push(Motion.animate(b,{y:0},{duration:motionOff?0:.22}))})});
-$$('.rule-list details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open&&!motionOff&&window.Motion)activeMotion.push(Motion.animate(d.querySelector('.rule-body'),{opacity:[0,1],y:[-6,0]},{duration:.25}));window.ScrollTrigger?.refresh()}));
+$('#year').textContent=new Date().getFullYear();let toastTimer;
+function toast(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3500)}
+$$('[data-copy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('Connection command copied. Paste it into Rust with F1.')}catch{toast('Copy unavailable. Open Join the server to select the command.')}});
+$$('[data-dialog]').forEach(b=>b.onclick=()=>{const d=document.getElementById(b.dataset.dialog);d.showModal();if(d.id==='mapDialog')mapUpdate()});$$('dialog').forEach(d=>{d.querySelector('.close').onclick=()=>d.close();d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close()})});
+const pages=['home','server','news','wildlife','farming'];const names={home:'OVERVIEW',server:'OUR SERVER',news:'WHAT’S NEW',wildlife:'WILDLIFE',farming:'FARMING'};
+function route(){let p=location.hash.slice(1);if(!pages.includes(p))p='home';$$('.page').forEach(el=>el.hidden=el.id!=='page-'+p);$$('[data-page]').forEach(a=>{const active=a.dataset.page===p;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});$('#pageLabel').textContent=names[p];document.title='Aussie Mafia | '+names[p];scrollTo({top:0,behavior:'instant'})}addEventListener('hashchange',route);route();
+const video=$('#worldVideo'),motionButton=$('#motionToggle'),reduce=matchMedia('(prefers-reduced-motion: reduce)');let motionOff=reduce.matches;
+function syncMotion(){motionButton.textContent=motionOff?'▶ Play background':'Ⅱ Pause background';$('#mobileMotion').textContent=motionOff?'Play background':'Pause background';motionButton.setAttribute('aria-pressed',String(motionOff));if(motionOff)video.pause();else video.play().catch(()=>{motionOff=true;motionButton.textContent='▶ Play background';motionButton.setAttribute('aria-pressed','true')})}motionButton.onclick=()=>{motionOff=!motionOff;syncMotion()};$('#mobileMotion').onclick=motionButton.onclick;reduce.addEventListener('change',()=>{motionOff=reduce.matches;syncMotion()});syncMotion();
+function closeCinema(){document.body.classList.remove('cinema');$('.cinema-ui').hidden=true;$('#cinema').focus()}$('#cinema').onclick=()=>{document.body.classList.add('cinema');$('.cinema-ui').hidden=false;$('#exitCinema').focus();if(!reduce.matches){motionOff=false;syncMotion()}};$('#exitCinema').onclick=closeCinema;addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('cinema'))closeCinema()});
+$$('[data-animal]').forEach(b=>{b.setAttribute('aria-pressed',String(b.classList.contains('active')));b.onclick=()=>{$$('[data-animal]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$$('[data-group]').forEach(a=>a.hidden=b.dataset.animal!=='all'&&b.dataset.animal!==a.dataset.group)}});
+const farmData={livestock:{label:'YOUR FIRST HERD',title:'Make room<br>for livestock.',text:'New gates and fences help contain animals. Grown livestock can be sold to a stable vendor; genetics influence offers.'},dairy:{label:'FROM THE HERD TO THE KITCHEN',title:'Milk, cream<br>& new recipes.',text:'Refrigerate milk for four hours to unlock skimming. Milk and cream can modify tea effects.'},fuel:{label:'NOTHING GOES TO WASTE',title:'Organic matter.<br>Useful fuel.',text:'The Biofuel Generator turns organic matter into low-grade fuel. It needs periodic hand stirring.'}};
+const farmTabs=$$('[data-farm]');function pickFarm(b){const d=farmData[b.dataset.farm];farmTabs.forEach(t=>{t.setAttribute('aria-selected',String(t===b));t.tabIndex=t===b?0:-1});$('#farmPanel').setAttribute('aria-labelledby',b.id);$('#farmLabel').textContent=d.label;$('#farmTitle').innerHTML=d.title;$('#farmText').textContent=d.text}farmTabs.forEach((b,i)=>{b.onclick=()=>pickFarm(b);b.onkeydown=e=>{let n;if(['ArrowRight','ArrowDown'].includes(e.key))n=(i+1)%farmTabs.length;if(['ArrowLeft','ArrowUp'].includes(e.key))n=(i+farmTabs.length-1)%farmTabs.length;if(e.key==='Home')n=0;if(e.key==='End')n=farmTabs.length-1;if(n!==undefined){e.preventDefault();pickFarm(farmTabs[n]);farmTabs[n].focus()}}});
 let zoom=1,panX=0,panY=0,drag=null;const stage=$('#mapStage'),layer=$('#mapLayer');function mapUpdate(){const maxX=stage.clientWidth*(zoom-1)/2,maxY=stage.clientHeight*(zoom-1)/2;panX=Math.max(-maxX,Math.min(maxX,panX));panY=Math.max(-maxY,Math.min(maxY,panY));layer.style.transform=`translate(${panX}px,${panY}px) scale(${zoom})`;$('#zoomValue').textContent=Math.round(zoom*100)+'%';$('#zoomOut').disabled=zoom<=1;$('#zoomIn').disabled=zoom>=3;stage.style.touchAction=zoom>1?'none':'pan-y'}function changeZoom(delta){zoom=Math.max(1,Math.min(3,zoom+delta));mapUpdate()}$('#zoomIn').onclick=()=>changeZoom(.5);$('#zoomOut').onclick=()=>changeZoom(-.5);$('#mapReset').onclick=()=>{zoom=1;panX=panY=0;mapUpdate()};stage.addEventListener('pointerdown',e=>{if(e.target.closest('button')||zoom===1)return;drag={x:e.clientX,y:e.clientY,panX,panY};stage.setPointerCapture(e.pointerId)});stage.addEventListener('pointermove',e=>{if(!drag)return;panX=drag.panX+e.clientX-drag.x;panY=drag.panY+e.clientY-drag.y;mapUpdate()});['pointerup','pointercancel','lostpointercapture'].forEach(type=>stage.addEventListener(type,()=>drag=null));stage.addEventListener('keydown',e=>{if(e.target!==stage)return;if(e.key==='+'||e.key==='='){changeZoom(.5);e.preventDefault()}else if(e.key==='-'){changeZoom(-.5);e.preventDefault()}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&zoom>1){panX+=e.key==='ArrowLeft'?30:e.key==='ArrowRight'?-30:0;panY+=e.key==='ArrowUp'?30:e.key==='ArrowDown'?-30:0;mapUpdate();e.preventDefault()}});new ResizeObserver(mapUpdate).observe(stage);mapUpdate();
-// Read the text count from the public, CORS-enabled BattleMetrics banner.
-// No subscription API, image enlargement, script execution or HTML insertion.
-const bannerURL='https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.html';
-const playerCount=$('#livePlayerCount'),bannerNote=$('#bannerNote'),bannerFallback=$('#bannerFallback'),refreshButton=$('#refresh');
-function parsePlayerCount(html){
- const doc=new DOMParser().parseFromString(html,'text/html');
- const serverLink=doc.querySelector('#server-name a');
- if(serverLink?.getAttribute('href')!=='https://www.battlemetrics.com/servers/rust/40453506')throw Error('Unexpected server');
- const raw=doc.querySelector('#server-players')?.textContent?.trim()||'';
- const match=raw.match(/^(\d+)\s*\/\s*(\d+)$/);
- if(!match||Number(match[2])<1)throw Error('Player count unavailable');
- return `${Number(match[1])}/${Number(match[2])}`;
-}
-async function refreshPlayers(){
- if(refreshButton.disabled)return;
- refreshButton.disabled=true;bannerNote.textContent='Refreshing online players…';
- try{
-  const response=await fetch(bannerURL,{signal:AbortSignal.timeout(15000)});
-  if(!response.ok)throw Error('Banner unavailable');
-  const count=parsePlayerCount(await response.text());
-  playerCount.textContent=count;playerCount.hidden=false;bannerFallback.hidden=true;
-  playerCount.title='Player count may be delayed.';
-  bannerNote.textContent='Player count updated; reported numbers may be delayed.';
- }catch{
-  playerCount.textContent='— / —';playerCount.title='Could not retrieve the player count.';
-  bannerFallback.hidden=false;bannerNote.textContent='Open the server page to check current players.';
- }finally{refreshButton.disabled=false}
-}
-refreshButton.onclick=refreshPlayers;refreshPlayers();
-setInterval(()=>{if(!document.hidden)refreshPlayers()},300000);
 
-// Restore the existing GoatCounter total; never replace account history with a local counter.
-async function loadVisitorTotal(){
- const fields=document.querySelectorAll('[data-visitor-count]');
- try{
-  const r=await fetch('https://aussiemafia.goatcounter.com/counter/TOTAL.json',{signal:AbortSignal.timeout(10000)});
-  if(!r.ok)throw Error('Counter unavailable');
-  const data=await r.json();
-  if(!['string','number'].includes(typeof data.count))throw Error('Invalid counter');
-  fields.forEach(el=>{el.textContent=String(data.count);el.title='All-time total reported by GoatCounter; updates may be delayed.'});
- }catch{fields.forEach(el=>{el.textContent='—';el.title='Visitor count temporarily unavailable.'})}
-}
-loadVisitorTotal();
-// Count visits on the existing website only, not local copies or hosted design previews.
-if(['www.aussiemafia.au','aussiemafia.au','aussiemafia.github.io'].includes(location.hostname.toLowerCase())){
- const tracker=document.createElement('script');tracker.async=true;tracker.src='https://gc.zgo.at/count.js';tracker.dataset.goatcounter='https://aussiemafia.goatcounter.com/count';document.head.appendChild(tracker);
-}
+async function refreshPlayers(){const refresh=$('#refresh');if(refresh.disabled)return;refresh.disabled=true;$('#status').textContent='Updating…';try{const r=await fetch('https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.html',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error();const doc=new DOMParser().parseFromString(await r.text(),'text/html');if(doc.querySelector('#server-name a')?.getAttribute('href')!=='https://www.battlemetrics.com/servers/rust/40453506')throw Error();const match=doc.querySelector('#server-players')?.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/);if(!match||+match[2]<1)throw Error();$('#players').textContent=Number(match[1])+' / '+Number(match[2]);$('#status').textContent='Player count · may be delayed';$('.dock-status').style.background='#94c68b'}catch{$('#players').textContent='— / —';$('#status').textContent='Count unavailable';$('.dock-status').style.background='#8493a3'}finally{refresh.disabled=false}}
+$('#refresh').onclick=refreshPlayers;refreshPlayers();setInterval(()=>{if(!document.hidden)refreshPlayers()},300000);

@@ -1,0 +1,18 @@
+AUSSIE MAFIA — NEW COMMUNITY HUB
+
+1. Extract this ZIP on your computer.
+2. Upload the extracted website files into the same GitHub repository folder that currently contains your site's index.html. Replace files with matching names.
+3. Upload the individual files, NOT the ZIP itself and not an extra enclosing folder.
+4. Commit the changes, then allow GitHub Pages to publish them.
+5. Open your website and refresh with Ctrl+F5 if the old design appears.
+
+index.html must sit beside style.css, app.js, the video, logo and image files.
+No npm installation or build is needed.
+
+CNAME is included for aussiemafia.au. If your existing CNAME uses www.aussiemafia.au, keep that existing CNAME instead. Leave your working Pages and DNS settings unchanged.
+
+The new design has the red-and-silver helmet logo and five navigation tabs.
+News is a manually maintained selection checked on 5 October 2026.
+The player count requires access to BattleMetrics; an unavailable state is shown if it cannot load.
+
+All artwork and footage required by this version are included. Older unused assets are not needed by this version.
