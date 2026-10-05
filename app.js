@@ -33,11 +33,11 @@ async function refreshPlayers(){
   if(!response.ok)throw Error('Banner unavailable');
   const count=parsePlayerCount(await response.text());
   playerCount.textContent=count;playerCount.hidden=false;bannerFallback.hidden=true;
-  playerCount.title='Reported by BattleMetrics. Cached counts may be delayed.';
-  bannerNote.textContent='Player count reported by BattleMetrics; updates may be delayed.';
+  playerCount.title='Player count may be delayed.';
+  bannerNote.textContent='Player count updated; reported numbers may be delayed.';
  }catch{
   playerCount.textContent='— / —';playerCount.title='Could not retrieve the player count.';
-  bannerFallback.hidden=false;bannerNote.textContent='Open BattleMetrics to check current players.';
+  bannerFallback.hidden=false;bannerNote.textContent='Open the server page to check current players.';
  }finally{refreshButton.disabled=false}
 }
 refreshButton.onclick=refreshPlayers;refreshPlayers();
