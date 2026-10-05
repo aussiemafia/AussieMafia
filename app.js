@@ -12,17 +12,36 @@ $('#motionToggle').onclick=()=>{motionOff=!motionOff;applyMotion()};reduceQuery.
 $$('.button').forEach(b=>{b.addEventListener('pointerenter',()=>{if(!motionOff&&window.Motion)activeMotion.push(Motion.animate(b,{y:-3},{type:'spring',stiffness:320,damping:20}))});b.addEventListener('pointerleave',()=>{if(window.Motion)activeMotion.push(Motion.animate(b,{y:0},{duration:motionOff?0:.22}))})});
 $$('.rule-list details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open&&!motionOff&&window.Motion)activeMotion.push(Motion.animate(d.querySelector('.rule-body'),{opacity:[0,1],y:[-6,0]},{duration:.25}));window.ScrollTrigger?.refresh()}));
 let zoom=1,panX=0,panY=0,drag=null;const stage=$('#mapStage'),layer=$('#mapLayer');function mapUpdate(){const maxX=stage.clientWidth*(zoom-1)/2,maxY=stage.clientHeight*(zoom-1)/2;panX=Math.max(-maxX,Math.min(maxX,panX));panY=Math.max(-maxY,Math.min(maxY,panY));layer.style.transform=`translate(${panX}px,${panY}px) scale(${zoom})`;$('#zoomValue').textContent=Math.round(zoom*100)+'%';$('#zoomOut').disabled=zoom<=1;$('#zoomIn').disabled=zoom>=3;stage.style.touchAction=zoom>1?'none':'pan-y'}function changeZoom(delta){zoom=Math.max(1,Math.min(3,zoom+delta));mapUpdate()}$('#zoomIn').onclick=()=>changeZoom(.5);$('#zoomOut').onclick=()=>changeZoom(-.5);$('#mapReset').onclick=()=>{zoom=1;panX=panY=0;mapUpdate()};stage.addEventListener('pointerdown',e=>{if(e.target.closest('button')||zoom===1)return;drag={x:e.clientX,y:e.clientY,panX,panY};stage.setPointerCapture(e.pointerId)});stage.addEventListener('pointermove',e=>{if(!drag)return;panX=drag.panX+e.clientX-drag.x;panY=drag.panY+e.clientY-drag.y;mapUpdate()});['pointerup','pointercancel','lostpointercapture'].forEach(type=>stage.addEventListener(type,()=>drag=null));stage.addEventListener('keydown',e=>{if(e.target!==stage)return;if(e.key==='+'||e.key==='='){changeZoom(.5);e.preventDefault()}else if(e.key==='-'){changeZoom(-.5);e.preventDefault()}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&zoom>1){panX+=e.key==='ArrowLeft'?30:e.key==='ArrowRight'?-30:0;panY+=e.key==='ArrowUp'?30:e.key==='ArrowDown'?-30:0;mapUpdate();e.preventDefault()}});new ResizeObserver(mapUpdate).observe(stage);mapUpdate();
-// BattleMetrics provides this public banner separately from its subscription API.
-const bannerBase='https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.png?foreground=%23ebece3&background=%231b201a&lines=%233d4836&linkColor=%23eb7646&chartColor=%23eb7646';
-const banner=$('#bmBanner'),bannerNote=$('#bannerNote'),bannerFallback=$('#bannerFallback'),refreshButton=$('#refresh');
-let bannerTimeout;
-function bannerReady(){clearTimeout(bannerTimeout);banner.hidden=false;bannerFallback.hidden=true;refreshButton.disabled=false;bannerNote.textContent='Reported by BattleMetrics · updates may be delayed.';}
-function bannerFailed(){clearTimeout(bannerTimeout);banner.hidden=true;bannerFallback.hidden=false;refreshButton.disabled=false;bannerNote.textContent='Banner unavailable. Open BattleMetrics to check the server.';}
-banner.addEventListener('load',bannerReady);banner.addEventListener('error',bannerFailed);
-function refreshBanner(){if(refreshButton.disabled)return;refreshButton.disabled=true;bannerNote.textContent='Refreshing BattleMetrics banner…';clearTimeout(bannerTimeout);bannerTimeout=setTimeout(bannerFailed,15000);banner.src=bannerBase+'&refresh='+Date.now();}
-refreshButton.onclick=refreshBanner;refreshBanner();
-setInterval(()=>{if(!document.hidden)refreshBanner()},300000);
-
+// Read the text count from the public, CORS-enabled BattleMetrics banner.
+// No subscription API, image enlargement, script execution or HTML insertion.
+const bannerURL='https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.html';
+const playerCount=$('#livePlayerCount'),bannerNote=$('#bannerNote'),bannerFallback=$('#bannerFallback'),refreshButton=$('#refresh');
+function parsePlayerCount(html){
+ const doc=new DOMParser().parseFromString(html,'text/html');
+ const serverLink=doc.querySelector('#server-name a');
+ if(serverLink?.getAttribute('href')!=='https://www.battlemetrics.com/servers/rust/40453506')throw Error('Unexpected server');
+ const raw=doc.querySelector('#server-players')?.textContent?.trim()||'';
+ const match=raw.match(/^(\d+)\s*\/\s*(\d+)$/);
+ if(!match||Number(match[2])<1)throw Error('Player count unavailable');
+ return `${Number(match[1])}/${Number(match[2])}`;
+}
+async function refreshPlayers(){
+ if(refreshButton.disabled)return;
+ refreshButton.disabled=true;bannerNote.textContent='Refreshing online players…';
+ try{
+  const response=await fetch(bannerURL,{signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error('Banner unavailable');
+  const count=parsePlayerCount(await response.text());
+  playerCount.textContent=count;playerCount.hidden=false;bannerFallback.hidden=true;
+  playerCount.title='Reported by BattleMetrics. Cached counts may be delayed.';
+  bannerNote.textContent='Player count reported by BattleMetrics; updates may be delayed.';
+ }catch{
+  playerCount.textContent='— / —';playerCount.title='Could not retrieve the player count.';
+  bannerFallback.hidden=false;bannerNote.textContent='Open BattleMetrics to check current players.';
+ }finally{refreshButton.disabled=false}
+}
+refreshButton.onclick=refreshPlayers;refreshPlayers();
+setInterval(()=>{if(!document.hidden)refreshPlayers()},300000);
 
 // Restore the existing GoatCounter total; never replace account history with a local counter.
 async function loadVisitorTotal(){
