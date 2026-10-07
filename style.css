@@ -77,3 +77,8 @@
 /* Keep the full Ori Island map visible above the fixed server dock. */
 #pveMapStage{height:clamp(320px,36vh,520px)!important}
 #pveMapLayer{display:grid;place-items:center}
+
+
+/* Keep map media inside the viewer bounds. */
+#pveMapLayer{overflow:hidden!important}
+#pveMapLayer img{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important}
