@@ -19,8 +19,9 @@ $('#refresh').onclick=refreshPlayers;refreshPlayers();setInterval(()=>{if(!docum
 const pveStatusWidget=$('#pve-status-widget');
 function readPveWidgetPlayers(){
  const section=pveStatusWidget?.shadowRoot?.querySelector('.serverCard-section--players');
- const raw=section?.textContent||'';
- return raw.replace(/\s+/g,' ').match(/(\d+)\s*\/\s*(\d+)/);
+ const value=section?.querySelector('.text-3xl')?.textContent||'';
+ const match=value.replace(/\s+/g,' ').trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+ return match&&+match[2]>0?match:null;
 }
 let pveRefreshInFlight=false;
 async function refreshPvePlayers(){
