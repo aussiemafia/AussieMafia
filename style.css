@@ -82,3 +82,44 @@
 /* Keep map media inside the viewer bounds. */
 #pveMapLayer{overflow:hidden!important}
 #pveMapLayer img{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important}
+
+/* Final image framing correction: full server banners and full Ori map. */
+.directory-card#directory-vanilla>img,
+.directory-card#directory-pve>img{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:#080e15;
+}
+#pveMapStage{
+  height:clamp(420px,58vh,720px)!important;
+  min-height:420px!important;
+}
+#pveMapLayer{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+#pveMapLayer img{
+  display:block!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+@media(max-width:600px){
+  #pveMapStage{
+    height:min(62svh,520px)!important;
+    min-height:320px!important;
+  }
+}
