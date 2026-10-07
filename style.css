@@ -72,3 +72,8 @@
 #pveMapLayer img{width:100%;height:100%;object-fit:contain;display:block}
 .pve-map-showcase>div:last-child{padding:26px}
 @media(max-width:600px){.pve-hero-stacked .pve-hero-copy{padding:34px 22px 38px}.pve-map-viewer .pve-map{height:55svh}}
+
+
+/* Keep the full Ori Island map visible above the fixed server dock. */
+#pveMapStage{height:clamp(320px,36vh,520px)!important}
+#pveMapLayer{display:grid;place-items:center}
