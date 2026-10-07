@@ -16,6 +16,26 @@ let zoom=1,panX=0,panY=0,drag=null;const stage=$('#mapStage'),layer=$('#mapLayer
 async function refreshPlayers(){const refresh=$('#refresh');if(refresh.disabled)return;refresh.disabled=true;$('#status').textContent='Updating…';try{const r=await fetch('https://cdn.battlemetrics.com/b/horizontal500x80px/40453506.html',{signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error();const doc=new DOMParser().parseFromString(await r.text(),'text/html');if(doc.querySelector('#server-name a')?.getAttribute('href')!=='https://www.battlemetrics.com/servers/rust/40453506')throw Error();const match=doc.querySelector('#server-players')?.textContent.trim().match(/^(\d+)\s*\/\s*(\d+)$/);if(!match||+match[2]<1)throw Error();$('#players').textContent=Number(match[1])+' / '+Number(match[2]);$('#status').textContent='Player count · may be delayed';$('.dock-status').style.background='#94c68b'}catch{$('#players').textContent='— / —';$('#status').textContent='Count unavailable';$('.dock-status').style.background='#8493a3'}finally{refresh.disabled=false;const cardPlayers=$('#vanilla-directory-players'),cardStatus=$('#vanilla-directory-status');if(cardPlayers)cardPlayers.textContent=$('#players').textContent;if(cardStatus)cardStatus.textContent=$('#status').textContent}}
 $('#refresh').onclick=refreshPlayers;refreshPlayers();setInterval(()=>{if(!document.hidden)refreshPlayers()},300000);
 
+async function refreshPvePlayers(){
+ const cardPlayers=$('#pve-directory-players'),cardStatus=$('#pve-directory-status');
+ if(!cardPlayers||!cardStatus)return;
+ cardStatus.textContent='Updating…';
+ try{
+  const r=await fetch('https://api.battlemetrics.com/servers?filter%5Bgame%5D=rust&filter%5Baddress%5D=161.38.217.68%3A28031',{signal:AbortSignal.timeout(12000)});
+  if(!r.ok)throw Error();
+  const j=await r.json(),s=j.data?.[0]?.attributes;
+  if(!s)throw Error();
+  const online=Number(s.players),max=Number(s.maxPlayers);
+  if(!Number.isFinite(online)||!Number.isFinite(max))throw Error();
+  cardPlayers.textContent=online+' / '+max;
+  cardStatus.textContent='Player count · may be delayed';
+ }catch{
+  cardPlayers.textContent='— / —';
+  cardStatus.textContent='Count unavailable';
+ }
+}
+refreshPvePlayers();setInterval(()=>{if(!document.hidden)refreshPvePlayers()},300000);
+
 // Background music supplied by the site owner. Try on load, then retry on a user gesture if blocked.
 const backgroundMusic=document.getElementById('backgroundMusic');
 backgroundMusic.volume=0.3;
