@@ -18,20 +18,23 @@ $('#refresh').onclick=refreshPlayers;refreshPlayers();setInterval(()=>{if(!docum
 
 const pveStatusWidget=$('#pve-status-widget');
 function readPveWidgetPlayers(){
- const raw=pveStatusWidget?.shadowRoot?.querySelector('.serverCard-section--players')?.textContent||'';
- return raw.replace(/\s+/g,' ').match(/players\s*(\d+)\s*\/\s*(\d+)/i);
+ const section=pveStatusWidget?.shadowRoot?.querySelector('.serverCard-section--players');
+ const raw=section?.textContent||'';
+ return raw.replace(/\s+/g,' ').match(/(\d+)\s*\/\s*(\d+)/);
 }
+let pveRefreshInFlight=false;
 async function refreshPvePlayers(){
  const cardPlayers=$('#pve-directory-players'),cardStatus=$('#pve-directory-status');
- if(!cardPlayers||!cardStatus)return;
+ if(!cardPlayers||!cardStatus||pveRefreshInFlight)return;
+ pveRefreshInFlight=true;
  cardStatus.textContent='Updating…';
  try{
   let match;
-  const until=Date.now()+12000;
+  const until=Date.now()+30000;
   while(Date.now()<until){
    match=readPveWidgetPlayers();
    if(match)break;
-   await new Promise(resolve=>setTimeout(resolve,250));
+   await new Promise(resolve=>setTimeout(resolve,500));
   }
   if(!match)throw Error();
   cardPlayers.textContent=match[1]+' / '+match[2];
@@ -39,9 +42,9 @@ async function refreshPvePlayers(){
  }catch{
   cardPlayers.textContent='— / —';
   cardStatus.textContent='Count unavailable';
- }
+ }finally{pveRefreshInFlight=false}
 }
-refreshPvePlayers();setInterval(()=>{if(!document.hidden)refreshPvePlayers()},300000);
+refreshPvePlayers();setTimeout(refreshPvePlayers,15000);setInterval(()=>{if(!document.hidden)refreshPvePlayers()},300000);
 
 // Background music supplied by the site owner. Try on load, then retry on a user gesture if blocked.
 const backgroundMusic=document.getElementById('backgroundMusic');
@@ -58,5 +61,29 @@ async function startBackgroundMusic(){
 backgroundMusic.addEventListener('playing',stopMusicRetries);
 musicGestures.forEach(type=>document.addEventListener(type,startBackgroundMusic,{capture:true,passive:true}));
 startBackgroundMusic();
+
+
+// Interactive Ori Island map
+let pveZoom=1,pvePanX=0,pvePanY=0,pveDrag=null;
+const pveStage=$('#pveMapStage'),pveLayer=$('#pveMapLayer');
+function pveMapUpdate(){
+ if(!pveStage||!pveLayer)return;
+ const maxX=pveStage.clientWidth*(pveZoom-1)/2,maxY=pveStage.clientHeight*(pveZoom-1)/2;
+ pvePanX=Math.max(-maxX,Math.min(maxX,pvePanX));pvePanY=Math.max(-maxY,Math.min(maxY,pvePanY));
+ pveLayer.style.transform=`translate(${pvePanX}px,${pvePanY}px) scale(${pveZoom})`;
+ const value=$('#pveZoomValue');if(value)value.textContent=Math.round(pveZoom*100)+'%';
+ const out=$('#pveZoomOut'),inc=$('#pveZoomIn');if(out)out.disabled=pveZoom<=1;if(inc)inc.disabled=pveZoom>=4;
+ pveStage.style.touchAction=pveZoom>1?'none':'pan-y';
+}
+function pveChangeZoom(delta){pveZoom=Math.max(1,Math.min(4,pveZoom+delta));pveMapUpdate()}
+if(pveStage){
+ $('#pveZoomIn').onclick=()=>pveChangeZoom(.5);$('#pveZoomOut').onclick=()=>pveChangeZoom(-.5);
+ $('#pveMapReset').onclick=()=>{pveZoom=1;pvePanX=pvePanY=0;pveMapUpdate()};
+ pveStage.addEventListener('pointerdown',e=>{if(e.target.closest('button')||pveZoom===1)return;pveDrag={x:e.clientX,y:e.clientY,panX:pvePanX,panY:pvePanY};pveStage.setPointerCapture(e.pointerId)});
+ pveStage.addEventListener('pointermove',e=>{if(!pveDrag)return;pvePanX=pveDrag.panX+e.clientX-pveDrag.x;pvePanY=pveDrag.panY+e.clientY-pveDrag.y;pveMapUpdate()});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(type=>pveStage.addEventListener(type,()=>pveDrag=null));
+ pveStage.addEventListener('keydown',e=>{if(e.target!==pveStage)return;if(e.key==='+'||e.key==='='){pveChangeZoom(.5);e.preventDefault()}else if(e.key==='-'){pveChangeZoom(-.5);e.preventDefault()}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&pveZoom>1){pvePanX+=e.key==='ArrowLeft'?30:e.key==='ArrowRight'?-30:0;pvePanY+=e.key==='ArrowUp'?30:e.key==='ArrowDown'?-30:0;pveMapUpdate();e.preventDefault()}});
+ new ResizeObserver(pveMapUpdate).observe(pveStage);pveMapUpdate();
+}
 
 function filterCards(stage){$$('[data-card-stage]').forEach(x=>x.hidden=stage!=='all'&&x.dataset.cardStage!==stage);$$('[data-card]').forEach(x=>{x.classList.toggle('active',x.dataset.card===stage);x.setAttribute('aria-pressed',String(x.dataset.card===stage))})}$$('[data-card]').forEach(x=>x.onclick=()=>filterCards(x.dataset.card));$$('[data-card-filter]').forEach(x=>x.onclick=()=>filterCards(x.dataset.cardFilter));

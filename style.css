@@ -58,3 +58,17 @@
 #directory-pve>img{height:auto;aspect-ratio:1672/941;object-fit:contain;object-position:center;background:#080e16}
 @media(max-width:900px){.pve-hero-copy{padding:42px 34px 44px}}
 @media(max-width:600px){.pve-hero{min-height:0}.pve-hero-copy{padding:35px 22px 38px}}
+
+/* PvE presentation fixes: show the supplied artwork in full and make the map interactive. */
+.pve-hero-stacked{min-height:0;display:grid;grid-template-rows:auto auto}
+.pve-hero-stacked>img{position:static;inset:auto;width:100%;height:auto;max-height:none;object-fit:contain;background:#080e15}
+.pve-hero-stacked:after{display:none}
+.pve-hero-stacked .pve-hero-copy{max-width:none;padding:46px 58px 48px;background:linear-gradient(135deg,#101c2a,#0b1521)}
+.directory-card#directory-pve>img{height:auto;aspect-ratio:auto;object-fit:contain;background:#080e15}
+.pve-map-showcase{display:flex;flex-direction:column}
+.pve-map-viewer{padding:0!important;background:#172c35}
+.pve-map-viewer .pve-map{height:clamp(380px,60vh,680px);border-radius:0}
+#pveMapLayer{width:100%;height:100%;transform-origin:center}
+#pveMapLayer img{width:100%;height:100%;object-fit:contain;display:block}
+.pve-map-showcase>div:last-child{padding:26px}
+@media(max-width:600px){.pve-hero-stacked .pve-hero-copy{padding:34px 22px 38px}.pve-map-viewer .pve-map{height:55svh}}
