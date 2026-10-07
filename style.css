@@ -123,3 +123,20 @@
     min-height:320px!important;
   }
 }
+
+
+/* PvE player command guide. */
+.pve-player-command-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:30px 0 36px}
+.pve-command-card{padding:25px;border:1px solid #ffffff1e;border-radius:7px;background:linear-gradient(135deg,#132333eb,#0c1724eb);box-shadow:0 15px 35px #0002}
+.pve-command-card h2{font-size:28px;line-height:1.08;margin:22px 0 10px}.pve-command-card>p{color:#bcc7d3;line-height:1.55;margin-bottom:20px}
+.pve-command-list{display:flex;flex-direction:column;border-top:1px solid #ffffff18}
+.pve-command-row{display:grid;grid-template-columns:minmax(145px,.9fr) minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #ffffff12}
+.pve-command-row code{color:#f4beb7;font-size:13px;white-space:nowrap}.pve-command-row span{color:#c6d0db;font-size:12px;line-height:1.35}
+.pve-command-copy{padding:6px 9px;border:1px solid #ffffff25;border-radius:3px;background:#08111c;color:#dce5ef;font-size:10px;letter-spacing:.1em;cursor:pointer}
+.pve-command-copy:hover{border-color:#f1a39a;color:#fff;background:#e48f8826}
+.pve-command-permission{display:block;margin-top:20px;color:#aebaca;font-size:10px;letter-spacing:.11em;line-height:1.5}
+.pve-no-command{margin-top:18px;padding:18px;border:1px solid #ffffff18;border-radius:5px;background:#08111cb8}
+.pve-no-command strong{display:block;color:#fff;font-size:15px}.pve-no-command p{margin:8px 0 0;color:#bcc7d3;font-size:13px;line-height:1.55}
+.pve-command-note{margin-top:0}.pve-command-note h3{margin-top:12px}
+@media(max-width:900px){.pve-player-command-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.pve-command-row{grid-template-columns:1fr;gap:7px}.pve-command-copy{justify-self:start}.pve-command-card{padding:21px}.pve-command-note .primary{width:100%;justify-content:center}}
