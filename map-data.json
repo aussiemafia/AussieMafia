@@ -1,10 +1,9 @@
 {
   "serverId": "40453506",
-  "size": 4000,
-  "seed": 102070,
-  "mapUrl": "https://rustmaps.com/map/4000_102070",
+  "size": 3500,
+  "seed": 1579777699,
+  "mapUrl": "https://rustmaps.com/map/3500_1579777699",
   "source": "RUSTalyzer public server listing",
   "sourceUrl": "https://www.rustalyzer.com/server/-35779421",
-  "levelUrl": "https://files.facepunch.com/rust/maps/868ce8734cf81a704086fc712fc71604c4dab69b8fb080f6928ae261f9ea25cd/proceduralmap.4000.1790898169406.289_868ce8734cf81a704086fc712fc71604.map",
-  "updatedAt": "2026-10-12T13:55:24Z"
+  "updatedAt": "2026-10-12T13:58:30Z"
 }
