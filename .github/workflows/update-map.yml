@@ -1,7 +1,12 @@
-name: Update Aussie Mafia Map
+name: Refresh Aussie Mafia Map
 
 on:
+  schedule:
+    - cron: "17 * * * *"
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/update-map.yml"
 
 permissions:
   contents: write
@@ -9,93 +14,99 @@ permissions:
 jobs:
   update-map:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout website
         uses: actions/checkout@v4
 
-      - name: Download current Rust map
-        env:
-          RUSTMAPS_API_KEY: ${{ secrets.RUSTMAPS_API_KEY }}
+      - name: Read the public server map details
         run: |
           python3 <<'PY'
+          import html
           import json
-          import os
-          import urllib.request
-
-          SIZE = "3500"
-          SEED = "1752646769"
-
-          url = f"https://api.rustmaps.com/v4/maps/{SIZE}/{SEED}?staging=false"
-
-          request = urllib.request.Request(
-              url,
-              headers={
-                  "X-API-Key": os.environ["RUSTMAPS_API_KEY"],
-                  "Content-Type": "application/json"
-              }
-          )
-
-          print(f"Requesting Rust map {SIZE}_{SEED}...")
-
-          with urllib.request.urlopen(request) as response:
-              data = json.load(response)
-
-          image_url = data.get("imageUrl")
-
-          if not image_url:
-              raise Exception("RustMaps did not return an imageUrl")
-
-          print("Map image found:", image_url)
-
-          with urllib.request.urlopen(image_url) as response:
-              image = response.read()
-
-          with open("current-map.jpg", "wb") as f:
-              f.write(image)
-
-          print("Saved current-map.jpg")
-          PY
-
-      - name: Update map page
-        run: |
-          python3 <<'PY'
-          from pathlib import Path
           import re
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
 
-          path = Path("map.html")
-          html = path.read_text(encoding="utf-8")
+          sources = [
+              ("BattleMetrics", "https://www.battlemetrics.com/servers/rust/40453506"),
+              ("RUSTalyzer", "https://www.rustalyzer.com/server/-35779421"),
+          ]
 
-          html = re.sub(
-              r'<img[^>]+class="current-map"[^>]*>',
-              '<img class="current-map" src="current-map.jpg" alt="Current Aussie Mafia Rust Map">',
-              html
-          )
-
-          if 'class="current-map"' not in html:
-              html = re.sub(
-                  r'<div class="map-panel">.*?</div>',
-                  '''<div class="map-panel">
-            <img class="current-map" src="current-map.jpg" alt="Current Aussie Mafia Rust Map">
-          </div>''',
-                  html,
-                  count=1,
-                  flags=re.DOTALL
+          def read_map(source_name, url):
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      "User-Agent": "AussieMafiaMapUpdater/1.0 (+https://www.aussiemafia.au/)",
+                      "Accept": "text/html,application/json"
+                  }
               )
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  raw = response.read().decode("utf-8", errors="replace")
 
-          path.write_text(html, encoding="utf-8")
+              seed = re.search(r'"rust_world_seed"\\s*:\\s*"?([0-9]+)', raw)
+              size = re.search(r'"rust_world_size"\\s*:\\s*"?([0-9]+)', raw)
+              if seed and size:
+                  return int(size.group(1)), int(seed.group(1)), source_name
+
+              plain = html.unescape(re.sub(r"<[^>]+>", " ", raw))
+              plain = re.sub(r"\\s+", " ", plain)
+              if source_name == "BattleMetrics":
+                  section = re.search(r"Map Information(.{0,3000})", plain, re.IGNORECASE)
+                  if section:
+                      plain = section.group(1)
+
+              seed = re.search(r"\\b(?:World\\s+)?Seed\\s*[:：]?\\s*([0-9]{3,10})\\b", plain, re.IGNORECASE)
+              size = re.search(r"\\b(?:World\\s+)?Size\\s*[:：]?\\s*([0-9]{3,5})\\b", plain, re.IGNORECASE)
+              if not seed or not size:
+                  raise ValueError("Map seed and size were not present in the public page")
+
+              world_size, world_seed = int(size.group(1)), int(seed.group(1))
+              if not (1000 <= world_size <= 10000 and 0 <= world_seed <= 4294967295):
+                  raise ValueError("Map size or seed is outside expected Rust ranges")
+              return world_size, world_seed, source_name
+
+          current = None
+          for source_name, url in sources:
+              try:
+                  current = (*read_map(source_name, url), url)
+                  print(f"Read map {current[0]}_{current[1]} from {source_name}")
+                  break
+              except Exception as exc:
+                  print(f"{source_name} lookup failed: {exc}")
+
+          if current is None:
+              raise SystemExit("Could not read the public map details from either listing")
+
+          size, seed, source_name, source_url = current
+          path = Path("map-data.json")
+          old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+          if old.get("size") == size and old.get("seed") == seed:
+              print("The website already has this map; no commit needed.")
+              raise SystemExit(0)
+
+          payload = {
+              "serverId": "40453506",
+              "size": size,
+              "seed": seed,
+              "mapUrl": f"https://rustmaps.com/map/{size}_{seed}",
+              "source": source_name,
+              "sourceUrl": source_url,
+              "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+          }
+          path.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+          print(f"Updated map-data.json to {size}_{seed}")
           PY
 
-      - name: Commit updated map
+      - name: Commit changed map data
         run: |
-          if git diff --quiet && [ -z "$(git status --porcelain current-map.jpg)" ]; then
-            echo "No map changes detected."
+          if git diff --quiet -- map-data.json; then
+            echo "No new map seed or size."
             exit 0
           fi
-
           git config user.name "Aussie Mafia Map Bot"
           git config user.email "actions@github.com"
-
-          git add map.html current-map.jpg
-          git commit -m "Update current Rust map"
+          git add map-data.json
+          git commit -m "Update current Rust map data"
           git push
