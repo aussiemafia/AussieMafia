@@ -24,7 +24,6 @@ jobs:
           import html
           import json
           import re
-          import urllib.error
           import urllib.request
           from datetime import datetime, timezone
           from pathlib import Path
@@ -45,20 +44,20 @@ jobs:
               with urllib.request.urlopen(request, timeout=30) as response:
                   raw = response.read().decode("utf-8", errors="replace")
 
-              seed = re.search(r'"rust_world_seed"\\s*:\\s*"?([0-9]+)', raw)
-              size = re.search(r'"rust_world_size"\\s*:\\s*"?([0-9]+)', raw)
+              seed = re.search(r'"rust_world_seed"\s*:\s*"?([0-9]+)', raw)
+              size = re.search(r'"rust_world_size"\s*:\s*"?([0-9]+)', raw)
               if seed and size:
                   return int(size.group(1)), int(seed.group(1)), source_name
 
               plain = html.unescape(re.sub(r"<[^>]+>", " ", raw))
-              plain = re.sub(r"\\s+", " ", plain)
+              plain = re.sub(r"\s+", " ", plain)
               if source_name == "BattleMetrics":
                   section = re.search(r"Map Information(.{0,3000})", plain, re.IGNORECASE)
                   if section:
                       plain = section.group(1)
 
-              seed = re.search(r"\\b(?:World\\s+)?Seed\\s*[:：]?\\s*([0-9]{3,10})\\b", plain, re.IGNORECASE)
-              size = re.search(r"\\b(?:World\\s+)?Size\\s*[:：]?\\s*([0-9]{3,5})\\b", plain, re.IGNORECASE)
+              seed = re.search(r"\b(?:World\s+)?Seed\s*[:：]?\s*([0-9]{3,10})\b", plain, re.IGNORECASE)
+              size = re.search(r"\b(?:World\s+)?Size\s*[:：]?\s*([0-9]{3,5})\b", plain, re.IGNORECASE)
               if not seed or not size:
                   raise ValueError("Map seed and size were not present in the public page")
 
@@ -95,7 +94,7 @@ jobs:
               "sourceUrl": source_url,
               "updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
           }
-          path.write_text(json.dumps(payload, indent=2) + "\\n", encoding="utf-8")
+          path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
           print(f"Updated map-data.json to {size}_{seed}")
           PY
 
