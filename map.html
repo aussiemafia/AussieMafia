@@ -129,53 +129,32 @@
   </main>
 
   <script>
-    // Aussie Mafia BattleMetrics server ID.
-    // BattleMetrics reports the current Rust world seed and world size.
-    const BATTLEMETRICS_SERVER_ID = '40453506';
-    const BATTLEMETRICS_API = `https://api.battlemetrics.com/servers/${BATTLEMETRICS_SERVER_ID}`;
-
-    const statusEl = document.getElementById('map-status');
-    const sizeEl = document.getElementById('map-size');
-    const seedEl = document.getElementById('map-seed');
-    const titleEl = document.getElementById('map-title');
-    const container = document.getElementById('map-container');
-    const openMapButton = document.getElementById('open-rustmaps');
-
-    function showFallback(message) {
-      statusEl.textContent = message || 'LIVE MAP UNAVAILABLE — SHOWING SAVED MAP';
-      container.innerHTML = '<img class="map-fallback" src="map.png" alt="Aussie Mafia saved map">';
-    }
-
     async function loadCurrentMap() {
       try {
-        const response = await fetch(BATTLEMETRICS_API, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`BattleMetrics returned ${response.status}`);
+        const response = await fetch(`map-data.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Map data returned ${response.status}`);
 
-        const payload = await response.json();
-        const attributes = payload?.data?.attributes || {};
-        const details = attributes.details || {};
+        const current = await response.json();
+        const seed = Number(current.seed);
+        const size = Number(current.size);
 
-        const seed = Number(details.rust_world_seed);
-        const size = Number(details.rust_world_size);
-
-        if (!Number.isFinite(seed) || !Number.isFinite(size) || seed < 0 || size <= 0) {
-          throw new Error('Current seed or world size was not available');
+        if (!Number.isSafeInteger(seed) || !Number.isSafeInteger(size) || seed < 0 || size <= 0) {
+          throw new Error('The current map seed or size is invalid');
         }
 
-        const rustMapsUrl = `https://rustmaps.com/map/${size}_${seed}`;
+        const rustMapsUrl = current.mapUrl || `https://rustmaps.com/map/${size}_${seed}`;
+        const updatedAt = current.updatedAt ? new Date(current.updatedAt) : null;
 
         titleEl.textContent = 'Current Aussie Mafia Map';
-        statusEl.textContent = attributes.status === 'online' ? 'LIVE SERVER DATA' : 'CURRENT SERVER DATA';
+        statusEl.textContent = updatedAt && !Number.isNaN(updatedAt.valueOf())
+          ? `CURRENT MAP · CHECKED ${updatedAt.toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Australia/Brisbane' })} AEST`
+          : 'CURRENT AUSSIE MAFIA MAP';
         sizeEl.textContent = `SIZE ${size}`;
         seedEl.textContent = `SEED ${seed}`;
         sizeEl.style.display = 'inline-flex';
         seedEl.style.display = 'inline-flex';
         openMapButton.href = rustMapsUrl;
 
-        // The page automatically follows the seed/size reported by BattleMetrics.
-        // RustMaps is loaded inside the existing MAP page. If RustMaps prevents
-        // embedding in a browser, the VIEW CURRENT MAP button still opens the
-        // correct live map directly in a new tab.
         container.innerHTML = `
           <iframe
             class="map-frame"
@@ -184,14 +163,13 @@
             loading="eager"
             referrerpolicy="no-referrer-when-downgrade">
           </iframe>`;
-
       } catch (error) {
-        console.error('Could not load live map information:', error);
-        showFallback('LIVE MAP CHECK FAILED — SHOWING SAVED MAP');
+        console.error('Could not load the current map:', error);
+        showFallback('CURRENT MAP DATA TEMPORARILY UNAVAILABLE');
       }
     }
 
-    loadCurrentMap();
+
   </script>
 
 </body>
